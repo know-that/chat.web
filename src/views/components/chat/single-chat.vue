@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import {defineProps, reactive, ref, watch} from "vue";
 import {getChatList, sendMessage} from "@/requests/chat";
-import { SmileOutlined, FolderOpenOutlined } from '@ant-design/icons-vue'
+import { SmileOutlined, FolderOpenOutlined, EllipsisOutlined } from '@ant-design/icons-vue'
 import {userStore} from "@/stores/user"
 
 const store = userStore()
@@ -26,7 +26,6 @@ const chatList = async (receiverUserId = null) => {
   }
 
   chatData.data = await getChatList(chatListParams).then(data => {
-    data.data.data.reverse()
     return data.data
   })
 }
@@ -36,7 +35,7 @@ const form = reactive({
   message: undefined
 })
 const submit = () => {
-  form.user_id = props.currentData.id
+  form.user_id = props.currentData.source_id
   sendMessage(form).then(data => {
     chatData.data.data.push(data.data)
     form.message = undefined
@@ -46,9 +45,9 @@ const submit = () => {
 watch(
     () => props.currentData,
     (newData, oldData) => {
-      chatList(newData.id)
+      chatList(newData.source_id)
     },
-    { deep: true }
+    { deep: true, immediate: true }
 )
 watch(
     () => props.newChatData,
@@ -60,20 +59,23 @@ watch(
 </script>
 
 <template>
-  <div class="chat">
-    <a-layout v-if="props.currentData.nickname">
+  <div class="single-chat">
+    <a-layout v-if="props.currentData.source.nickname">
       <a-layout-header class="left">
-        <span class="title">{{ currentData.nickname }}</span>
+        <div class="header-title">
+          <span class="title">{{ currentData.source.nickname }}</span>
+          <ellipsis-outlined class="actions" />
+        </div>
       </a-layout-header>
 
       <a-layout-content class="center">
-        <div v-if="chatData.data?.data && chatData.data.data.length > 0">
+        <div class="chat-list" v-if="chatData.data?.data && chatData.data.data.length > 0">
           <div v-for="(item, index) in chatData.data?.data" :key="index">
-            <div v-if="item.receiver_user_id === props.currentData?.id" style="margin-bottom: 20px;display: flex">
-              <div><a-avatar shape="square" :size="48" :src="props.currentData.avatar" /></div>
+            <div v-if="item.receiver_user_id === props.currentData.source?.id" style="margin-bottom: 20px;display: flex">
+              <div><a-avatar shape="square" :size="48" :src="props.currentData.source.avatar" /></div>
 
               <div style="width: 100%;padding:0 10px;">
-                <div><b>{{ props.currentData.nickname }}</b></div>
+                <div><b>{{ props.currentData.source.nickname }}</b></div>
                 <div style="white-space: pre-line;word-break: break-all; width: 80%">
                   <span style="display: inline-block;padding: 10px;background-color: #00c1de;border-radius: 8px;">{{ item.content }}</span>
                 </div>
@@ -111,7 +113,7 @@ watch(
 </template>
 
 <style lang="less" scoped>
-.chat {
+.single-chat {
   height: 100%;
 
   ::v-deep(.ant-layout) {
@@ -124,6 +126,42 @@ watch(
     display: flex;
     align-items: center;
     justify-content: center;
+  }
+
+  .center {
+    .chat-list {
+      overflow-y: auto;
+      display: flex;
+      flex-flow: column-reverse;
+      align-items: baseline;
+      height: 100%;
+      margin-left: -8px;
+      margin-right: -8px;
+
+      >div {
+        padding: 8px;
+        width: 100%;
+      }
+    }
+  }
+
+  .footer {
+    .actions {
+      font-size: 20px;
+      >* {
+        padding: 6px;
+      }
+    }
+
+    .textarea {
+      height: 120px;
+      resize: none;
+    }
+
+    .submit {
+      height: 40px;
+      line-height: 40px;
+    }
   }
 }
 

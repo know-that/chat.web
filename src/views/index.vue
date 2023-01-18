@@ -45,6 +45,17 @@ const current = reactive({
   width: 1200px;
   margin: 80px auto 0 auto;
 
+  ::v-deep(.ant-layout) {
+    .ant-layout-header {
+      background-color: #E7E8E9;
+      border-bottom: 1px solid;
+      border-color: @border-color-base;
+    }
+    .ant-layout-header, .ant-layout-content, .ant-layout-footer {
+      padding: 8px;
+    }
+  }
+
   .left {
     position: relative;
 
@@ -74,73 +85,6 @@ const current = reactive({
     display: flex;
     align-items: center;
     justify-content: center;
-  }
-
-  ::v-deep(.right) {
-    height: 800px;
-
-    .left {
-      padding: 8px;
-      display: flex;
-      align-items: center;
-
-      .title {
-        font-size: 20px;
-        font-weight: 600;
-      }
-    }
-
-    .ant-layout-header {
-      background-color: #E7E8E9;
-    }
-    .header {
-      padding: 8px;
-    }
-    .center {
-      border-bottom: 1px solid;
-      border-color: @border-color-base;
-      background-color: transparent;
-      padding: 8px;
-      height: 600px;
-      overflow-y: auto;
-      display: flex;
-      flex-flow: column-reverse;
-      align-items: baseline;
-
-      >div {
-        width: 100%;
-      }
-    }
-    .footer {
-      height: 200px;
-      padding: 0 8px;
-
-      .actions {
-        height: 40px;
-        padding: 8px;
-        font-size: 20px;
-        display: flex;
-        align-items: center;
-
-        .anticon {
-          cursor: pointer;
-          margin-right: 8px;
-        }
-        .anticon:hover {
-          color: @primary-color;
-        }
-      }
-
-      .textarea {
-        height: 120px;
-        resize: none;
-      }
-
-      .submit {
-        height: 40px;
-        line-height: 40px;
-      }
-    }
   }
 }
 </style>

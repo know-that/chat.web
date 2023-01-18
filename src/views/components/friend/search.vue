@@ -47,7 +47,7 @@ const handleFriendAdd = async () => {
     <a-modal v-model:visible="props.params.visible" :width="600" :footer="null" title="搜索">
       <a-input class="input-search" v-model:value="form.search" size="large" @pressEnter="submit()">
         <template #suffix>
-          <search-outlined />
+          <search-outlined @click="submit()" />
         </template>
       </a-input>
 
