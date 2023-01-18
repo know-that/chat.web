@@ -1,0 +1,64 @@
+html {
+  color: @text-color;
+}
+
+body {
+  background-image: url('@/assets/images/index_bg.png');
+  background-color: #f9f9f9;
+}
+
+*[placeholder] {
+  font-size: @font-size-base;
+  font-weight: 300;
+}
+
+::selection {
+  background: @selection;
+}
+
+/*滚动条整体部分*/
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+/*滚动条两端按钮*/
+::-webkit-scrollbar-button {
+  display: none;
+}
+
+/*滚动条外层轨道*/
+::-webkit-scrollbar-track {
+  display: none;
+}
+
+/*滚动条内层轨道*/
+::-webkit-scrollbar-track-piece {
+  border-radius: 4px;
+}
+
+/*滚动条*/
+::-webkit-scrollbar-thumb {
+  background: @text-color-secondary;
+  border-radius: 4px;
+}
+
+
+.primary {
+  color: @primary-color;
+}
+.success {
+  color: @success-color;
+}
+.warning {
+  color: @warning-color;
+}
+.danger {
+  color: @error-color;
+}
+.info {
+  color: @text-color-secondary;
+}
+.block {
+  width: 100%;
+}

@@ -1,0 +1,1 @@
+const websocket = new WebSocket(process.env.APP_WEBSOCKET_URL);
