@@ -1,9 +1,10 @@
 <script lang="ts" setup>
+import { reactive } from "vue"
 import Login from '@/views/components/auth/Login.vue'
 import Register from '@/views/components/auth/Register.vue'
+import Avatar from '@/views/components/auth/avatar.vue'
 import { userStore } from '@/stores/user'
 import { getMe } from '@/requests/auth'
-import {reactive} from "vue";
 
 const store = userStore()
 let meData = {
@@ -36,7 +37,7 @@ const loginChange = (mode) => {
 
 <template>
   <div>
-    <a-avatar v-if="meData.data.id" class="avatar" shape="square" :size="48" :src="meData.data.avatar"></a-avatar>
+    <Avatar v-if="meData.data.id" :src="meData.data.avatar" :params="meData.data" />
     <a-avatar v-else class="avatar" shape="square" :size="48" @click="login()">未登录</a-avatar>
 
     <Login :params="loginParams" @change="loginChange" />

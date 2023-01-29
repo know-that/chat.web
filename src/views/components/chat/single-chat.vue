@@ -1,8 +1,9 @@
 <script lang="ts" setup>
-import {defineProps, reactive, ref, watch} from "vue";
-import {getChatList, sendMessage} from "@/requests/chat";
+import { reactive, watch } from "vue";
 import { SmileOutlined, FolderOpenOutlined, EllipsisOutlined } from '@ant-design/icons-vue'
-import {userStore} from "@/stores/user"
+import Avatar from '@/views/components/auth/avatar.vue'
+import { getChatList, sendMessage } from "@/requests/chat"
+import { userStore } from "@/stores/user"
 
 const store = userStore()
 let meData = {
@@ -72,7 +73,9 @@ watch(
         <div class="chat-list" v-if="chatData.data?.data && chatData.data.data.length > 0">
           <div v-for="(item, index) in chatData.data?.data" :key="index">
             <div v-if="item.receiver_user_id === props.currentData.source?.id" style="margin-bottom: 20px;display: flex">
-              <div><a-avatar shape="square" :size="48" :src="props.currentData.source.avatar" /></div>
+              <div>
+                <Avatar shape="square" :src="props.currentData.source.avatar" :params="props.currentData.source" />
+              </div>
 
               <div style="width: 100%;padding:0 10px;">
                 <div><b>{{ props.currentData.source.nickname }}</b></div>
@@ -88,7 +91,9 @@ watch(
                   <span style="text-align: left;display: inline-block;padding: 10px;background-color: #00c1de;border-radius: 8px;">{{ item.content }}</span>
                 </div>
               </div>
-              <div><a-avatar shape="square" :size="48" :src="meData.data.avatar" /></div>
+              <div>
+                <Avatar shape="square" :src="meData.data.avatar" :params="meData.data" />
+              </div>
             </div>
           </div>
         </div>

@@ -4,7 +4,7 @@ import Cookie from 'js-cookie'
 import { SettingOutlined } from '@ant-design/icons-vue'
 import AuthAvatar from '@/views/components/auth/auth-avatar.vue'
 import Chat from '@/views/components/chat/index.vue'
-import Friend from '@/views/components/friend/index.vue'
+import ChatSession from '@/views/components/chat-session/index.vue'
 
 let url = import.meta.env.VITE_WEBSOCKET_URL + "?token=" + Cookie.get("Authorization")
 const newChatData = reactive({data: {}})
@@ -30,7 +30,7 @@ const current = reactive({
       </a-layout-sider>
 
       <a-layout-sider class="center" :width="300">
-        <Friend @choice="item => current.data = item" />
+        <ChatSession @choice="item => current.data = item" />
       </a-layout-sider>
 
       <a-layout class="right">

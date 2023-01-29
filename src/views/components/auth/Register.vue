@@ -1,7 +1,7 @@
 <script lang="ts" setup>
-import {defineProps, getCurrentInstance, reactive} from 'vue'
+import { getCurrentInstance, reactive } from 'vue'
 import Cookie from 'js-cookie'
-import {login, register} from '@/requests/auth'
+import { login, register } from '@/requests/auth'
 
 const Message = getCurrentInstance()?.appContext.config.globalProperties.$message
 defineProps({

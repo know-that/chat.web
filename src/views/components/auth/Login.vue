@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import {defineProps, getCurrentInstance, reactive} from 'vue'
+import { getCurrentInstance, reactive } from 'vue'
 import Cookie from 'js-cookie'
 import { login } from '@/requests/auth'
 

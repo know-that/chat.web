@@ -1,8 +1,8 @@
 <script lang="ts" setup>
-import {defineEmits, reactive} from "vue"
+import { reactive } from "vue"
 import { PlusCircleOutlined } from '@ant-design/icons-vue'
-import {getChatSessionList} from "@/requests/chat"
-import Search from '@/views/components/friend/search.vue'
+import { getChatSessionList } from "@/requests/chat"
+import Search from '@/views/components/chat-session/search.vue'
 
 const emit = defineEmits(['choice'])
 
@@ -18,10 +18,13 @@ const chatSessionList = async () => {
 }
 chatSessionList()
 
+const currentItem = reactive({data: {}})
 const choiceChat = (item, index) => {
   if (chatSessionData.data[index].last_message) {
     chatSessionData.data[index].last_message.is_read = 1
   }
+  currentItem.data = item
+  console.log(currentItem.data)
   emit('choice', item)
 }
 
@@ -45,7 +48,7 @@ const searchParams = reactive({
 
     <a-list item-layout="horizontal" :data-source="chatSessionData.data">
       <template #renderItem="{ item, index }">
-        <a-list-item @click="choiceChat(item, index)">
+        <a-list-item @click="choiceChat(item, index)" :class="{'chat-session-item': currentItem.data.id === item.id}">
           <a-list-item-meta>
             <template #avatar>
               <a-badge :dot="item.last_message?.is_read === 0">
@@ -101,6 +104,9 @@ const searchParams = reactive({
 
   .add {
     font-size: 20px;
+  }
+  .chat-session-item {
+    background-color: e("@{primary-color}10");
   }
 }
 </style>

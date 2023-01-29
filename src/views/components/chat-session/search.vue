@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import {defineProps, getCurrentInstance, reactive, toRaw} from "vue";
+import { getCurrentInstance, reactive } from "vue";
 import { SearchOutlined, ManOutlined, WomanOutlined } from '@ant-design/icons-vue'
 import { getSearchList } from '@/requests/search'
 import { addFriendRequest } from '@/requests/friend'

@@ -30,6 +30,7 @@ declare module '@vue/runtime-core' {
     AListItemMeta: typeof import('ant-design-vue/es')['ListItemMeta']
     AModal: typeof import('ant-design-vue/es')['Modal']
     APopconfirm: typeof import('ant-design-vue/es')['Popconfirm']
+    APopover: typeof import('ant-design-vue/es')['Popover']
     ARadio: typeof import('ant-design-vue/es')['Radio']
     ARadioGroup: typeof import('ant-design-vue/es')['RadioGroup']
     ARow: typeof import('ant-design-vue/es')['Row']

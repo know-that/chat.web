@@ -1,8 +1,7 @@
 <script lang="ts" setup>
-import {defineProps, getCurrentInstance, reactive} from "vue"
-import {getNoticeList, getNoticeInfo} from "@/requests/notice"
-import {examineFriendRequest} from "@/requests/friend"
-import {userStore} from "@/stores/user";
+import { getCurrentInstance, reactive } from "vue"
+import { getNoticeList, getNoticeInfo } from "@/requests/notice"
+import { examineFriendRequest } from "@/requests/friend"
 import { ManOutlined, WomanOutlined } from '@ant-design/icons-vue'
 
 const Message = getCurrentInstance()?.appContext.config.globalProperties.$message
