@@ -37,7 +37,7 @@ const form = reactive({
 const submit = () => {
   form.user_id = props.currentData.source_id
   sendMessage(form).then(data => {
-    chatData.data.data.push(data.data)
+    chatData.data.data.unshift(data.data)
     form.message = undefined
   })
 }
@@ -52,7 +52,7 @@ watch(
 watch(
     () => props.newChatData,
     (newData, oldData) => {
-      chatData.data.data.push(newData)
+      chatData.data.data.unshift(newData)
     },
     { deep: true }
 )
