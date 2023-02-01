@@ -13,8 +13,11 @@
     "ant-design-vue": "^3.2.15",
     "axios": "^1.2.2",
     "js-cookie": "^3.0.1",
+    "moment": "^2.29.4",
     "pinia": "^2.0.29",
-    "vue": "^3.2.45"
+    "twemoji": "^14.0.2",
+    "vue": "^3.2.45",
+    "vue3-twemoji-picker-final": "^0.0.15"
   },
   "devDependencies": {
     "@types/node": "^18.11.12",

@@ -22,7 +22,7 @@ const submit = () => {
       expires: data.data.expires_in
     })
 
-    params.visible = false
+    location.reload()
   })
 }
 </script>

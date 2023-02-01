@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import {reactive} from 'vue'
+import { reactive, nextTick } from 'vue'
 import Cookie from 'js-cookie'
 import { SettingOutlined } from '@ant-design/icons-vue'
 import AuthAvatar from '@/views/components/auth/auth-avatar.vue'
@@ -17,8 +17,17 @@ websocket.onmessage = (res) => {
 }
 
 const current = reactive({
-  data: {}
+  data: {},
+  isReload: false
 })
+
+const chatSessionChoice = (item) => {
+  current.data = item
+  current.isReload = false
+  nextTick(() => {
+    current.isReload = true
+  });
+}
 </script>
 
 <template>
@@ -30,11 +39,11 @@ const current = reactive({
       </a-layout-sider>
 
       <a-layout-sider class="center" :width="300">
-        <ChatSession @choice="item => current.data = item" />
+        <ChatSession @choice="chatSessionChoice" />
       </a-layout-sider>
 
       <a-layout class="right">
-        <Chat :currentData="current.data" :newChatData="newChatData.data" />
+        <Chat :isReload="current.isReload" :currentData="current.data" :newChatData="newChatData.data" />
       </a-layout>
     </a-layout>
   </div>

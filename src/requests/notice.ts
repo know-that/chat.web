@@ -2,7 +2,7 @@ import HTTP from '@/utils/axios'
 
 export function getNoticeList(params) {
     return HTTP({
-        url: '/notices',
+        url: '/chat-notices',
         method: 'get',
         params: params
     })
@@ -11,7 +11,7 @@ export function getNoticeList(params) {
 export function getNoticeInfo(id)
 {
     return HTTP({
-        url: `/notices/${id}`,
+        url: `/chat-notices/${id}`,
         method: 'get'
     })
 }

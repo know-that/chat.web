@@ -1,6 +1,7 @@
 <script lang="ts" setup>
-import { reactive, watch } from "vue";
+import { reactive, ref, watch } from "vue";
 import { SmileOutlined, FolderOpenOutlined, EllipsisOutlined } from '@ant-design/icons-vue'
+import { EmojiPicker } from 'vue3-twemoji-picker-final'
 import Avatar from '@/views/components/auth/avatar.vue'
 import { getChatList, sendMessage } from "@/requests/chat"
 import { userStore } from "@/stores/user"
@@ -33,14 +34,42 @@ const chatList = async (receiverUserId = null) => {
 
 const form = reactive({
   user_id: undefined,
-  message: undefined
+  message: ''
 })
 const submit = () => {
   form.user_id = props.currentData.source_id
   sendMessage(form).then(data => {
     chatData.data.data.unshift(data.data)
-    form.message = undefined
+    form.message = ''
   })
+}
+
+const emojiOptions = {
+  imgSrc: '/img/',
+  native: true,
+  hasGroupIcons: true,
+  hasSearch: false,
+  hasGroupNames: true,
+  stickyGroupNames: true,
+  hasSkinTones: true,
+  recentRecords: true
+}
+const myTextarea = ref(null)
+const popover = reactive({
+  visible: false
+})
+const emojiSelect = (e) => {
+  let startPos = myTextarea.value.$el.selectionStart
+  let endPos = myTextarea.value.$el.selectionEnd
+  form.message = form.message.substring(0, startPos) + e.i + form.message.substring(endPos, form.message.length)
+
+  myTextarea.value.$el.focus()
+  popover.visible = false
+}
+
+
+const uploadFile = (e) => {
+  console.log(e)
 }
 
 watch(
@@ -72,7 +101,8 @@ watch(
       <a-layout-content class="center">
         <div class="chat-list" v-if="chatData.data?.data && chatData.data.data.length > 0">
           <div v-for="(item, index) in chatData.data?.data" :key="index">
-            <div v-if="item.receiver_user_id === props.currentData.source?.id" style="margin-bottom: 20px;display: flex">
+            <div v-if="item.is_system === 1" class="info" style="text-align: center">{{ item.message.content }}</div>
+            <div v-else-if="item.receiver_user_id === props.currentData.source?.id" style="margin-bottom: 20px;display: flex">
               <div>
                 <Avatar shape="square" :src="props.currentData.source.avatar" :params="props.currentData.source" />
               </div>
@@ -80,7 +110,7 @@ watch(
               <div style="width: 100%;padding:0 10px;">
                 <div><b>{{ props.currentData.source.nickname }}</b></div>
                 <div style="white-space: pre-line;word-break: break-all; width: 80%">
-                  <span style="display: inline-block;padding: 10px;background-color: #00c1de;border-radius: 8px;">{{ item.content }}</span>
+                  <span style="display: inline-block;padding: 10px;background-color: #00c1de;border-radius: 8px;">{{ item.message.content }}</span>
                 </div>
               </div>
             </div>
@@ -88,7 +118,7 @@ watch(
               <div style="width: 100%;padding:0 10px;">
                 <div><b>{{ meData.data.nickname }}</b></div>
                 <div style="text-align: right;white-space: pre-line;word-break: break-all;width: 80%">
-                  <span style="text-align: left;display: inline-block;padding: 10px;background-color: #00c1de;border-radius: 8px;">{{ item.content }}</span>
+                  <span style="text-align: left;display: inline-block;padding: 10px;background-color: #00c1de;border-radius: 8px;">{{ item.message.content }}</span>
                 </div>
               </div>
               <div>
@@ -102,10 +132,19 @@ watch(
 
       <a-layout-footer class="footer">
         <div class="actions">
-          <smile-outlined />
-          <folder-open-outlined />
+          <a-popover v-model:visible="popover.visible" trigger="click">
+            <template #content>
+              <div class="emoji">
+                <EmojiPicker :options="emojiOptions" @select="emojiSelect" />
+              </div>
+            </template>
+            <smile-outlined />
+          </a-popover>
+          <a-upload :customRequest="uploadFile" :fileList="null">
+            <folder-open-outlined />
+          </a-upload>
         </div>
-        <a-textarea v-model:value="form.message" class="textarea" :bordered="false" placeholder="Autosize height based on content lines" />
+        <a-textarea v-model:value="form.message" ref="myTextarea" class="textarea" :bordered="false" />
         <div class="submit" align="right">
           <a-button type="primary" ghost @click="submit()">发送</a-button>
         </div>
@@ -152,7 +191,10 @@ watch(
 
   .footer {
     .actions {
-      font-size: 20px;
+      .anticon {
+        cursor: pointer;
+        font-size: 20px;
+      }
       >* {
         padding: 6px;
       }
@@ -170,4 +212,15 @@ watch(
   }
 }
 
+.emoji {
+  height: 400px;
+
+  ::v-deep(.emoji-picker) {
+    padding: 0;
+
+    .current-emoji, .emoji-block {
+      font-size: 20px;
+    }
+  }
+}
 </style>

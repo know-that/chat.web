@@ -2,7 +2,7 @@ import HTTP from '@/utils/axios'
 
 export function getChatList(params) {
     return HTTP({
-        url: '/chats',
+        url: '/chat-single',
         method: 'get',
         params: params
     })
@@ -10,7 +10,7 @@ export function getChatList(params) {
 
 export function sendMessage(params) {
     return HTTP({
-        url: '/chats',
+        url: '/chat-single',
         method: 'post',
         data: params
     })

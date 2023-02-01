@@ -15,16 +15,15 @@ const form = reactive({
 })
 
 const submit = () => {
-  register(form).then(res => {
-    login(form).then(data => {
-      Message.success(data?.message ?? 'ok')
-      console.log(data)
+  register(form).then(data => {
+    Message.success(data?.message ?? 'ok')
 
-      Cookie.set("Authorization", data.data.access_token, {
-        path: '/',
-        maxAge: data.data.expires_in
-      })
+    Cookie.set("Authorization", data.data.access_token, {
+      path: '/',
+      expires: data.data.expires_in
     })
+
+    location.reload()
   })
 }
 </script>

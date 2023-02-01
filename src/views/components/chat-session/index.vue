@@ -21,16 +21,25 @@ chatSessionList()
 const currentItem = reactive({data: {}})
 const choiceChat = (item, index) => {
   if (chatSessionData.data[index].last_message) {
-    chatSessionData.data[index].last_message.is_read = 1
+    chatSessionData.data[index].last_chat.message.is_read = 1
   }
   currentItem.data = item
-  console.log(currentItem.data)
   emit('choice', item)
 }
 
 const searchParams = reactive({
   visible: false
 })
+
+const showDot = (item) => {
+  let bool
+  if (item.last_chat_type === 'chat_single') {
+      bool = item.last_chat?.message.is_read === 0 && item.last_chat.receiver_user_id !== item.user_id
+  } else {
+      bool = item.last_chat?.message.is_read === 0
+  }
+  return bool
+}
 </script>
 
 <template>
@@ -51,7 +60,7 @@ const searchParams = reactive({
         <a-list-item @click="choiceChat(item, index)" :class="{'chat-session-item': currentItem.data.id === item.id}">
           <a-list-item-meta>
             <template #avatar>
-              <a-badge :dot="item.last_message?.is_read === 0">
+              <a-badge :dot="showDot(item)">
                 <a-avatar class="avatar" shape="square" :size="48" :src="item.avatar" />
               </a-badge>
             </template>
@@ -59,7 +68,7 @@ const searchParams = reactive({
               <a>{{ item.source.nickname }}</a>
             </template>
             <template #description>
-              <div class="description">{{ item.last_message?.content }}</div>
+              <div class="description">{{ item.last_chat?.message.content }}</div>
             </template>
           </a-list-item-meta>
         </a-list-item>

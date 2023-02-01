@@ -4,14 +4,15 @@ import SingleChat from "./single-chat.vue"
 
 const props = defineProps({
   currentData: Object,
-  newChatData: Object
+  newChatData: Object,
+  isReload: Boolean
 })
 </script>
 
 <template>
   <div class="chat">
-    <SystemUser v-if="props.currentData.source_type === 'system_user'" :currentData="props.currentData" />
-    <SingleChat v-else-if="props.currentData.source_type === 'user'" :currentData="props.currentData" :newChatData="props.newChatData"  />
+    <SystemUser v-if="props.currentData.source_type === 'system_user' && props.isReload" :currentData="props.currentData" />
+    <SingleChat v-else-if="props.currentData.source_type === 'user' && props.isReload" :currentData="props.currentData" :newChatData="props.newChatData"  />
     <a-empty v-else />
   </div>
 </template>

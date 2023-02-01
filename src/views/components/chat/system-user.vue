@@ -1,8 +1,10 @@
 <script lang="ts" setup>
 import { getCurrentInstance, reactive } from "vue"
+import moment from 'moment'
 import { getNoticeList, getNoticeInfo } from "@/requests/notice"
 import { examineFriendRequest } from "@/requests/friend"
 import { ManOutlined, WomanOutlined } from '@ant-design/icons-vue'
+import Avatar from '@/views/components/auth/avatar.vue'
 
 const Message = getCurrentInstance()?.appContext.config.globalProperties.$message
 const props = defineProps({
@@ -13,6 +15,7 @@ const props = defineProps({
 let noticeData = reactive({data: []})
 const getNotice = async () => {
   let params = {
+    source_type: props.currentData.source.type === 1 ? 'system_user' : 'friend_request',
     page: 1,
     limit: 30
   }
@@ -60,15 +63,26 @@ const examineOk = () => {
             <a-list-item>
               <a-card>
                 <template #title>
-                  <div class="title">
-                    <span>好友请求</span>
-                  </div>
+                  <div class="title">{{ item.source_type === 'system_user' ? item.source.nickname : '好友请求' }}</div>
+                </template>
+                <template #extra>
+                  <span class="info" style="font-size: 12px">{{ moment(item.created_at).format('YYYY-MM-DD H:mm:ss') }}</span>
                 </template>
                 <div class="word-line">
-                  {{ item.content }}
+                  <div v-if="item.source_type === 'system_user'">
+                    {{ item.message.content }}
+                  </div>
+                  <div v-else>
+                    用户
+                    <a>
+                      <Avatar shape="square" :size="30" :src="item.source.friend.avatar" :params="item.source.friend" />
+                      {{ item.source.friend.nickname }}
+                    </a>
+                    希望添加你为好友
+                  </div>
                 </div>
 
-                <template #actions>
+                <template v-if="item.source_type === 'friend_request'" #actions>
                   <a @click="examine(item)">查看详情</a>
                 </template>
               </a-card>
@@ -86,7 +100,7 @@ const examineOk = () => {
           <woman-outlined v-else />
         </a-form-item>
 
-        <a-form-item class="word-line">
+        <a-form-item v-if="noticeInfoData.data?.source.remark" class="word-line">
           {{ noticeInfoData.data.source.remark }}
         </a-form-item>
 
