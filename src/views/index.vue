@@ -52,7 +52,7 @@ const chatSessionChoice = (item) => {
 <style lang="less" scoped>
 .body {
   width: 1200px;
-  margin: 80px auto 0 auto;
+  margin: 0 auto 0 auto;
 
   ::v-deep(.ant-layout) {
     .ant-layout-header {

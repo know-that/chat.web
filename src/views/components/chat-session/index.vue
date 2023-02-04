@@ -20,7 +20,7 @@ chatSessionList()
 
 const currentItem = reactive({data: {}})
 const choiceChat = (item, index) => {
-  if (chatSessionData.data[index].last_message) {
+  if (chatSessionData.data[index].last_chat) {
     chatSessionData.data[index].last_chat.message.is_read = 1
   }
   currentItem.data = item
@@ -55,13 +55,13 @@ const showDot = (item) => {
       </a-row>
     </div>
 
-    <a-list item-layout="horizontal" :data-source="chatSessionData.data">
+    <a-list class="chat-session-list" item-layout="horizontal" :data-source="chatSessionData.data">
       <template #renderItem="{ item, index }">
         <a-list-item @click="choiceChat(item, index)" :class="{'chat-session-item': currentItem.data.id === item.id}">
           <a-list-item-meta>
             <template #avatar>
               <a-badge :dot="showDot(item)">
-                <a-avatar class="avatar" shape="square" :size="48" :src="item.avatar" />
+                <a-avatar class="avatar" shape="square" :size="48" :src="item.source.avatar">{{ item.source.nickname }}</a-avatar>
               </a-badge>
             </template>
             <template #title>
@@ -84,6 +84,11 @@ const showDot = (item) => {
   height: 100%;
   border-right: 1px solid;
   border-color: @border-color-base;
+
+  .chat-session-list {
+    max-height: 736px;
+    overflow-y: auto;
+  }
 
   .search {
     height: 64px;

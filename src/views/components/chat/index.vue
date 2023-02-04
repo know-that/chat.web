@@ -20,6 +20,9 @@ const props = defineProps({
 <style lang="less" scoped>
 .chat {
   height: 800px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
   ::v-deep(.ant-layout-header) {
 

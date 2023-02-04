@@ -12,18 +12,47 @@ const props = defineProps({
   newChatData: Object
 })
 
-let noticeData = reactive({data: []})
+let noticeData = reactive({data: [], loading: false})
+const noticeParams = reactive({
+  source_type: props.currentData.source.type === 1 ? 'system_user' : 'friend_request',
+  page: 1,
+  limit: 6
+})
 const getNotice = async () => {
-  let params = {
-    source_type: props.currentData.source.type === 1 ? 'system_user' : 'friend_request',
-    page: 1,
-    limit: 30
+  if (noticeData.data && noticeData.data.current_page >= noticeData.data.last_page) {
+    return;
   }
-  noticeData.data = await getNoticeList(params).then(data => {
+
+  noticeData.loading = true
+
+  let data = await getNoticeList(noticeParams).then(data => {
     return data.data
   })
+
+  if (!noticeData.data.data) {
+    noticeData.data = data
+  } else {
+    data.data.forEach(item => {
+      noticeData.data.data.push(item)
+    })
+
+    noticeData.data.current_page = data.current_page
+    noticeData.data.last_page = data.last_page
+  }
+  let nextPage = data.current_page + 1
+  noticeParams.page = nextPage > data.last_page ? data.last_page : nextPage
+  noticeData.loading = false
 }
 getNotice()
+
+const scrollLoad = (e) => {
+  if (
+      !noticeData.loading &&
+      Math.abs(e.target.scrollTop) >= e.target.scrollHeight - e.target.offsetHeight - 100
+  ) {
+    getNotice()
+  }
+}
 
 const noticeInfoData = reactive({data: {}})
 const confirmAddParams = reactive({
@@ -57,7 +86,7 @@ const examineOk = () => {
         </div>
       </a-layout-header>
 
-      <a-layout-content class="center">
+      <a-layout-content class="center" @scroll="scrollLoad">
         <a-list :grid="{ column: 1}" item-layout="vertical" :data-source="noticeData.data.data">
           <template #renderItem="{ item }">
             <a-list-item>
@@ -66,7 +95,7 @@ const examineOk = () => {
                   <div class="title">{{ item.source_type === 'system_user' ? item.source.nickname : '好友请求' }}</div>
                 </template>
                 <template #extra>
-                  <span class="info" style="font-size: 12px">{{ moment(item.created_at).format('YYYY-MM-DD H:mm:ss') }}</span>
+                  <span class="info time">{{ moment(item.created_at).format('YYYY-MM-DD H:mm:ss') }}</span>
                 </template>
                 <div class="word-line">
                   <div v-if="item.source_type === 'system_user'">
@@ -75,15 +104,17 @@ const examineOk = () => {
                   <div v-else>
                     用户
                     <a>
-                      <Avatar shape="square" :size="30" :src="item.source.friend.avatar" :params="item.source.friend" />
-                      {{ item.source.friend.nickname }}
+                      <Avatar shape="square" :size="30" :src="item.source.user.avatar" :params="item.source.user" />
+                      {{ item.source.user.nickname }}
                     </a>
                     希望添加你为好友
                   </div>
                 </div>
 
                 <template v-if="item.source_type === 'friend_request'" #actions>
-                  <a @click="examine(item)">查看详情</a>
+                  <a v-if="item.source.state === 0" @click="examine(item)">查看详情</a>
+                  <span v-else-if="item.source.state === 10" class="success">已同意</span>
+                  <span v-else-if="item.source.state === 20" class="info">已拒绝</span>
                 </template>
               </a-card>
             </a-list-item>
@@ -127,6 +158,7 @@ const examineOk = () => {
 
 <style lang="less" scoped>
 .system-user {
+  width: 100%;
   height: 100%;
 
   ::v-deep(.ant-layout) {
@@ -136,10 +168,19 @@ const examineOk = () => {
       overflow-y: auto;
       display: flex;
       flex-flow: column-reverse;
-      align-items: baseline;
+      height: 100%;
+
+      .ant-row {
+        display: flex;
+        flex-flow: column-reverse;
+      }
+
+      .ant-list {
+        width: 100%;
+      }
 
       .ant-col {
-        padding: 0 200px;
+        padding: 0 220px;
       }
 
       .title {
@@ -149,6 +190,9 @@ const examineOk = () => {
         .left {
           flex: auto;
         }
+      }
+      .time {
+        font-size: 12px
       }
     }
   }

@@ -27,7 +27,7 @@ const showUserInfo = async () => {
 
 <template>
   <a-popover :visible="attr.visible" trigger="click" placement="rightTop">
-    <a-avatar :shape="shape" :size="size" :src="src" @click="showUserInfo"></a-avatar>
+    <a-avatar :shape="shape" :size="size" :src="src" @click="showUserInfo">{{ params.nickname }}</a-avatar>
 
     <template #title>
       <div style="display: flex;align-items: center">
@@ -47,6 +47,8 @@ const showUserInfo = async () => {
     <template #content>
       <div>昵称：{{ params.nickname }}</div>
       <div>账号：{{ params.account }}</div>
+
+      <slot name="actions"></slot>
     </template>
   </a-popover>
 </template>
