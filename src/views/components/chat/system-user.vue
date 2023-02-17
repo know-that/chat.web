@@ -69,11 +69,12 @@ const examine = async (item) => {
   confirmAddParams.visible = true
 }
 
-const examineOk = () => {
-  examineFriendRequest(noticeInfoData.data.source_id, confirmAddParams.form)
+const examineOk = async () => {
+  await examineFriendRequest(noticeInfoData.data.source_id, confirmAddParams.form)
     .then(data => {
       Message.success(data.message || 'ok')
     })
+  confirmAddParams.visible = false
 }
 </script>
 
@@ -148,7 +149,7 @@ const examineOk = () => {
           <a-textarea
             v-model:value="confirmAddParams.form.reason"
             placeholder="拒绝理由，可不填" allow-clear show-count :maxlength="200"
-            :autosize="{ minRows: 6, maxRows: 6 }"
+            :autoSize="{ minRows: 6, maxRows: 6 }"
           />
         </a-form-item>
       </a-form>

@@ -1,10 +1,13 @@
 <script lang="ts" setup>
-import { reactive } from "vue"
+import {reactive, watch} from "vue"
 import { PlusCircleOutlined } from '@ant-design/icons-vue'
 import { getChatSessionList } from "@/requests/chat"
 import Search from '@/views/components/chat-session/search.vue'
 
 const emit = defineEmits(['choice'])
+const props = defineProps({
+  newData: Object
+})
 
 let chatSessionData = reactive({data: []})
 const chatSessionList = async () => {
@@ -40,6 +43,14 @@ const showDot = (item) => {
   }
   return bool
 }
+
+watch(
+    () => props.newData.update_at,
+    (newData, oldData) => {
+      chatSessionList()
+    },
+    { deep: true }
+)
 </script>
 
 <template>

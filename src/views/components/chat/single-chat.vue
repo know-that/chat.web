@@ -13,7 +13,7 @@ let meData = {
 
 const props = defineProps({
   currentData: Object,
-  newChatData: Object
+  newData: Object
 })
 
 const chatData = reactive({data: {}, loading: false})
@@ -107,7 +107,7 @@ watch(
     { deep: true, immediate: true }
 )
 watch(
-    () => props.newChatData,
+    () => props.newData,
     (newData, oldData) => {
       chatData.data.data.unshift(newData)
     },

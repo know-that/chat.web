@@ -5,14 +5,23 @@ import { SettingOutlined } from '@ant-design/icons-vue'
 import AuthAvatar from '@/views/components/auth/auth-avatar.vue'
 import Chat from '@/views/components/chat/index.vue'
 import ChatSession from '@/views/components/chat-session/index.vue'
+import moment from 'moment'
 
 let url = import.meta.env.VITE_WEBSOCKET_URL + "?token=" + Cookie.get("Authorization")
-const newChatData = reactive({data: {}})
+const newChatSingleData = reactive({data: {}})
+const newChatSessionData = reactive({update_at: undefined})
 const websocket = new WebSocket(url)
 websocket.onmessage = (res) => {
   let data = JSON.parse(res.data)
-  if (data?.message) {
-    newChatData.data = JSON.parse(data.message)
+
+  switch (data?.type) {
+    case 'chat_single':
+      newChatSingleData.data = data.data
+      break;
+
+    case 'chat_session':
+      newChatSessionData.update_at = moment().format('YYYY-MM-DD H:mm:ss')
+      break;
   }
 }
 
@@ -39,11 +48,11 @@ const chatSessionChoice = (item) => {
       </a-layout-sider>
 
       <a-layout-sider class="center" :width="300">
-        <ChatSession @choice="chatSessionChoice" />
+        <ChatSession :newData="newChatSessionData" @choice="chatSessionChoice" />
       </a-layout-sider>
 
       <a-layout class="right">
-        <Chat :isReload="current.isReload" :currentData="current.data" :newChatData="newChatData.data" />
+        <Chat :isReload="current.isReload" :currentData="current.data" :newChatData="newChatSingleData.data" />
       </a-layout>
     </a-layout>
   </div>

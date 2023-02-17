@@ -80,7 +80,7 @@ const handleFriendAdd = async () => {
       <a-textarea
         v-model:value="confirmAddParams.form.remark"
         placeholder="textarea with clear icon" allow-clear show-count :maxlength="200"
-        :autosize="{ minRows: 6, maxRows: 6 }"
+        :autoSize="{ minRows: 6, maxRows: 6 }"
       />
     </a-modal>
   </div>
