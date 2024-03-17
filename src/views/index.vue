@@ -16,7 +16,7 @@ websocket.onmessage = (res) => {
 
   switch (data?.type) {
     case 'chat_single':
-      newChatSingleData.data = data.data
+      newChatSingleData.data = JSON.parse(data.data)
       break;
 
     case 'chat_session':
