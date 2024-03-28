@@ -40,7 +40,7 @@ const chatSessionChoice = (item) => {
 </script>
 
 <template>
-  <div class="body">
+  <div class="body w-[1200px]">
     <a-layout>
       <a-layout-sider class="left" :width="70">
         <AuthAvatar class="avatar" />
@@ -60,8 +60,6 @@ const chatSessionChoice = (item) => {
 
 <style lang="less" scoped>
 .body {
-  width: 1200px;
-  margin: 50px auto;
 
   ::v-deep(.ant-layout) {
     .ant-layout-header {

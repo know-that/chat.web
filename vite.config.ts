@@ -38,7 +38,7 @@ export default ({ mode }) => {
 
     //配置跨域
     server: {
-      open: true,  //启动项目后打开浏览器
+      // open: true,  //启动项目后打开浏览器
       port: 5173,   //端口
       proxy: {
         '/websocket': {
