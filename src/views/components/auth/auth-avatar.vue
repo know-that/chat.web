@@ -50,7 +50,7 @@ const logout = () => {
         </div>
       </template>
     </Avatar>
-    <a-avatar v-else class="avatar" shape="square" :size="48" @click="login()">请登录</a-avatar>
+    <a-avatar v-else class="bg-slate-500" shape="square" :size="48" @click="login()">请登录</a-avatar>
 
     <Login :params="loginParams" @change="loginChange" />
     <Register :params="registerParams" @change="loginChange" />

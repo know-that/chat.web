@@ -26,7 +26,7 @@ const showUserInfo = async () => {
 </script>
 
 <template>
-  <a-popover :visible="attr.visible" trigger="click" placement="rightTop">
+  <a-popover v-model:open="attr.visible" trigger="click" placement="rightTop">
     <a-avatar :shape="shape" :size="size" :src="src" @click="showUserInfo">{{ params.nickname }}</a-avatar>
 
     <template #title>

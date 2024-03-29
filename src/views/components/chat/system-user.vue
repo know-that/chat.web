@@ -124,7 +124,7 @@ const examineOk = async () => {
       </a-layout-content>
     </a-layout>
 
-    <a-modal v-model:visible="confirmAddParams.visible" :width="400" title="好友申请" @ok="examineOk()" cancelText="取消" okText="确认">
+    <a-modal v-model:open="confirmAddParams.visible" :width="400" title="好友申请" @ok="examineOk()" cancelText="取消" okText="确认">
       <a-form layout="vertical">
         <a-form-item>
           <span><a-avatar :src="noticeInfoData.data.source.user.avatar" /> {{ noticeInfoData.data.source.user.nickname }}</span>
@@ -169,6 +169,7 @@ const examineOk = async () => {
       overflow-y: auto;
       display: flex;
       flex-flow: column-reverse;
+	    align-items: center;
       height: 100%;
 
       .ant-row {
@@ -177,11 +178,7 @@ const examineOk = async () => {
       }
 
       .ant-list {
-        width: 100%;
-      }
-
-      .ant-col {
-        padding: 0 220px;
+        width: 420px;
       }
 
       .title {

@@ -6,6 +6,7 @@ import { AntDesignVueResolver } from 'unplugin-vue-components/resolvers'
 import { createHtmlPlugin } from 'vite-plugin-html'
 
 // https://vitejs.dev/config/
+// @ts-ignore
 export default ({ mode }) => {
   const env = loadEnv(mode, process.cwd())
 

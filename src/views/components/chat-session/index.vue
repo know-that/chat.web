@@ -54,11 +54,11 @@ watch(
 </script>
 
 <template>
-  <div class="chat-session">
+  <div class="chat-session flex flex-col">
     <div class="search">
       <a-row>
         <a-col :span="22">
-          <a-input :bordered="false" placeholder="search..." allowClear />
+          <a-input :bordered="false" placeholder="搜索会话..." allowClear />
         </a-col>
         <a-col :span="2">
           <a class="add info"><plus-circle-outlined @click="searchParams.visible = true" /></a>
@@ -66,13 +66,13 @@ watch(
       </a-row>
     </div>
 
-    <a-list class="chat-session-list" item-layout="horizontal" :data-source="chatSessionData.data">
+    <a-list class="flex-1 max-h-full overflow-y-auto" item-layout="horizontal" :data-source="chatSessionData.data">
       <template #renderItem="{ item, index }">
         <a-list-item @click="choiceChat(item, index)" :class="{'chat-session-item': currentItem.data.id === item.id}">
           <a-list-item-meta>
             <template #avatar>
               <a-badge :dot="showDot(item)">
-                <a-avatar class="avatar" shape="square" :size="48" :src="item.source.avatar">{{ item.source.nickname }}</a-avatar>
+                <a-avatar shape="square" :size="48" :src="item.source.avatar">{{ item.source.nickname }}</a-avatar>
               </a-badge>
             </template>
             <template #title>
@@ -95,11 +95,19 @@ watch(
   height: 100%;
   border-right: 1px solid;
   border-color: @border-color-base;
-
-  .chat-session-list {
-    max-height: 736px;
-    overflow-y: auto;
-  }
+	
+	::v-deep(.ant-list) {
+		.ant-spin-container, .ant-spin-nested-loading {
+			height: 100%;
+			max-height: 100%;
+		}
+		.ant-list-empty-text {
+			height: 100%;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		}
+	}
 
   .search {
     height: 64px;

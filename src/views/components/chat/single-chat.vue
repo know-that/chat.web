@@ -1,6 +1,7 @@
 <script lang="ts" setup>
-import { reactive, ref, watch } from "vue";
+import { reactive, ref, watch } from "vue"
 import { SmileOutlined, FolderOpenOutlined, EllipsisOutlined } from '@ant-design/icons-vue'
+import { message } from 'ant-design-vue'
 import { EmojiPicker } from 'vue3-twemoji-picker-final'
 import Avatar from '@/views/components/auth/avatar.vue'
 import { getChatList, sendMessage } from "@/requests/chat"
@@ -8,15 +9,15 @@ import { userStore } from "@/stores/user"
 
 const store = userStore()
 let meData = {
-  data: store.$state.user
+  data: store.$state.user as any
 }
 
 const props = defineProps({
-  currentData: Object,
+  currentData: Object as any,
   newData: Object
 })
 
-const chatData = reactive({data: {}, loading: false})
+const chatData = reactive({data: {} as any, loading: false})
 const chatListParams = reactive({
   receiver_user_id: undefined,
   page: 1
@@ -39,7 +40,7 @@ const chatList = async (receiverUserId = null) => {
   if (!chatData.data.data) {
     chatData.data = data
   } else {
-    data.data.forEach(item => {
+    data.data.forEach((item: any) => {
       chatData.data.data.push(item)
     })
 
@@ -51,16 +52,30 @@ const chatList = async (receiverUserId = null) => {
   chatData.loading = false
 }
 
-const form = reactive({
+const form = ref({
   user_id: undefined,
   message: ''
 })
-const submit = () => {
-  form.user_id = props.currentData.source_id
-  sendMessage(form).then(data => {
-    chatData.data.data.unshift(data.data)
-    form.message = ''
-  })
+const loading = ref(false)
+const submit = async (e: any) => {
+	// 阻止 shift + enter
+	if (e.shiftKey && e.key) {
+		return;
+	}
+	
+	loading.value = true
+	try {
+		if (form.value.message.trim() === '') {
+			message.warning("不能发送空消息")
+			return
+		}
+		form.value.user_id = props.currentData.source_id
+		const data = await sendMessage(form.value)
+		chatData.data.data.unshift(data.data)
+	} finally {
+		form.value.message = ''
+		loading.value = false
+	}
 }
 
 const emojiOptions = {
@@ -73,24 +88,24 @@ const emojiOptions = {
   hasSkinTones: true,
   recentRecords: true
 }
-const myTextarea = ref(null)
+const myTextarea = ref(String as any)
 const popover = reactive({
   visible: false
 })
-const emojiSelect = (e) => {
+const emojiSelect = (e: any) => {
   let startPos = myTextarea.value.$el.selectionStart
   let endPos = myTextarea.value.$el.selectionEnd
-  form.message = form.message.substring(0, startPos) + e.i + form.message.substring(endPos, form.message.length)
+  form.value.message = form.value.message.substring(0, startPos) + e.i + form.value.message.substring(endPos, form.value.message.length)
 
   myTextarea.value.$el.focus()
   popover.visible = false
 }
 
-const uploadFile = (e) => {
+const uploadFile = (e: any) => {
   console.log(e)
 }
 
-const scrollLoad = (e) => {
+const scrollLoad = (e: any) => {
   if (
       !chatData.loading &&
       Math.abs(e.target.scrollTop) >= e.target.scrollHeight - e.target.offsetHeight - 100
@@ -159,7 +174,7 @@ watch(
 
       <a-layout-footer class="footer">
         <div class="actions">
-          <a-popover v-model:visible="popover.visible" trigger="click">
+          <a-popover v-model:open="popover.visible" trigger="click">
             <template #content>
               <div class="emoji">
                 <EmojiPicker :options="emojiOptions" @select="emojiSelect" />
@@ -171,10 +186,12 @@ watch(
             <folder-open-outlined />
           </a-upload>
         </div>
-        <a-textarea v-model:value="form.message" ref="myTextarea" class="textarea" :bordered="false" />
-        <div class="submit" align="right">
-          <a-button type="primary" ghost @click="submit()">发送</a-button>
-        </div>
+	      <a-form @submit="submit">
+		      <a-textarea v-model:value="form.message" ref="myTextarea" class="textarea" :bordered="false" @pressEnter="submit($event)" />
+		      <div class="submit" align="right">
+			      <a-button size="large" class="!px-8" type="primary" :loading="loading" html-type="submit">发送</a-button>
+		      </div>
+	      </a-form>
       </a-layout-footer>
     </a-layout>
     <a-layout v-else>
@@ -310,6 +327,10 @@ watch(
   ::v-deep(.emoji-picker) {
     padding: 0;
 
+	  .emoji-body {
+		  padding: 0;
+	  }
+	  
     .current-emoji, .emoji-block {
       font-size: 20px;
     }

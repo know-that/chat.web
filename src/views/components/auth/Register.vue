@@ -30,7 +30,7 @@ const submit = () => {
 
 <template>
   <div>
-    <a-modal v-model:visible="params.visible" :width="350" :footer="null" title="快速注册">
+    <a-modal v-model:open="params.visible" :width="350" :footer="null" title="快速注册">
       <a-form layout="vertical">
         <a-form-item label="账号">
           <a-input v-model:value="form.account" size="large" placeholder="请输出账户 、邮箱、手机号"/>

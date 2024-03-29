@@ -10,7 +10,7 @@ const props = defineProps({
 </script>
 
 <template>
-  <div class="chat">
+  <div class="chat h-full">
     <SystemUser v-if="props.currentData.source_type === 'system_user' && props.isReload" :currentData="props.currentData" />
     <SingleChat v-else-if="props.currentData.source_type === 'user' && props.isReload" :currentData="props.currentData" :newData="props.newChatData"  />
     <a-empty v-else />
@@ -19,7 +19,6 @@ const props = defineProps({
 
 <style lang="less" scoped>
 .chat {
-  height: 800px;
   display: flex;
   align-items: center;
   justify-content: center;

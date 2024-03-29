@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { reactive, nextTick } from 'vue'
+import {ref, reactive, nextTick, watch} from 'vue'
 import Cookie from 'js-cookie'
 import { SettingOutlined } from '@ant-design/icons-vue'
 import AuthAvatar from '@/views/components/auth/auth-avatar.vue'
@@ -7,30 +7,59 @@ import Chat from '@/views/components/chat/index.vue'
 import ChatSession from '@/views/components/chat-session/index.vue'
 import moment from 'moment'
 
-let url = import.meta.env.VITE_WEBSOCKET_URL + "?token=" + Cookie.get("Authorization")
-const newChatSingleData = reactive({data: {}})
-const newChatSessionData = reactive({update_at: undefined})
-const websocket = new WebSocket(url)
-websocket.onmessage = (res) => {
-  let data = JSON.parse(res.data)
-
-  switch (data?.type) {
-    case 'chat_single':
-      newChatSingleData.data = JSON.parse(data.data)
-      break;
-
-    case 'chat_session':
-      newChatSessionData.update_at = moment().format('YYYY-MM-DD H:mm:ss')
-      break;
-  }
+const newChatSingleData = ref({data: {}})
+const newChatSessionData = ref({update_at: ''})
+const websocketParams = ref({
+	url: import.meta.env.VITE_WEBSOCKET_URL + "?token=" + Cookie.get("Authorization"),
+	interval: 0,
+	isOpen: false
+})
+const initWebsocket = async () => {
+	const websocket = new WebSocket(websocketParams.value.url)
+	
+	websocket.onopen = (res) => {
+		websocketParams.value.isOpen = true
+		clearInterval(websocketParams.value.interval)
+	}
+	websocket.onmessage = (res) => {
+		let data = JSON.parse(res.data)
+		
+		switch (data?.type) {
+			case 'chat_single':
+				newChatSingleData.value.data = JSON.parse(data.data)
+				break;
+			
+			case 'chat_session':
+				newChatSessionData.value.update_at = moment().format('YYYY-MM-DD H:mm:ss')
+				break;
+		}
+	}
+	websocket.onclose = () => {
+		websocketParams.value.isOpen = false
+	}
+	
+	websocket.onerror = function(error) {
+		console.error('WebSocket Error: ', error);
+	};
 }
+watch(
+	() => websocketParams.value.isOpen,
+	async (value) => {
+		if (!value) {
+			websocketParams.value.interval = setInterval(async () => {
+				await initWebsocket()
+			}, 1000)
+		}
+	},
+	{ immediate: true }
+)
 
 const current = reactive({
   data: {},
   isReload: false
 })
 
-const chatSessionChoice = (item) => {
+const chatSessionChoice = (item: any) => {
   current.data = item
   current.isReload = false
   nextTick(() => {
@@ -40,8 +69,8 @@ const chatSessionChoice = (item) => {
 </script>
 
 <template>
-  <div class="body w-[1200px]">
-    <a-layout>
+  <div class="body w-[1200px] h-[800px]">
+    <a-layout class="h-full">
       <a-layout-sider class="left" :width="70">
         <AuthAvatar class="avatar" />
         <setting-outlined class="setting" />

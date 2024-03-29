@@ -44,8 +44,8 @@ const handleFriendAdd = async () => {
 
 <template>
   <div>
-    <a-modal v-model:visible="props.params.visible" :width="600" :footer="null" title="搜索">
-      <a-input class="input-search" v-model:value="form.search" size="large" @pressEnter="submit()">
+    <a-modal v-model:open="props.params.visible" :width="600" :footer="null" title="搜索用户">
+      <a-input class="input-search" v-model:value="form.search" size="large" @pressEnter="submit()" placeholder="输入昵称、账号查找好友">
         <template #suffix>
           <search-outlined @click="submit()" />
         </template>
@@ -56,7 +56,7 @@ const handleFriendAdd = async () => {
           <a-list-item>
             <a-list-item-meta>
               <template #avatar>
-                <a-avatar :src="item.avatar" />
+                <a-avatar :size="48" :src="item.avatar" />
               </template>
               <template #title>
                 <a>{{ item.nickname }}</a>
@@ -69,14 +69,14 @@ const handleFriendAdd = async () => {
             </a-list-item-meta>
 
             <template #actions>
-              <a @click="addFriend(item)">加为好友</a>
+	            <a-button type="primary" @click="addFriend(item)" ghost>加为好友</a-button>
             </template>
           </a-list-item>
         </template>
       </a-list>
     </a-modal>
 
-    <a-modal v-model:visible="confirmAddParams.visible" :width="400" title="添加好友申请" @ok="handleFriendAdd()" cancelText="取消" okText="发送请求">
+    <a-modal v-model:open="confirmAddParams.visible" :width="400" title="添加好友申请" @ok="handleFriendAdd()" cancelText="取消" okText="发送请求">
       <a-textarea
         v-model:value="confirmAddParams.form.remark"
         placeholder="textarea with clear icon" allow-clear show-count :maxlength="200"
