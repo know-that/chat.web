@@ -6,6 +6,7 @@ import { EmojiPicker } from 'vue3-twemoji-picker-final'
 import Avatar from '@/views/components/auth/avatar.vue'
 import { getChatList, sendMessage } from "@/requests/chat"
 import { userStore } from "@/stores/user"
+import { OSSUpload } from "@/requests/upload";
 
 const store = userStore()
 let meData = {
@@ -101,8 +102,11 @@ const emojiSelect = (e: any) => {
   popover.visible = false
 }
 
-const uploadFile = (e: any) => {
-  console.log(e)
+const uploadFile = async (e: any) => {
+	// 进行上传
+	let data = await OSSUpload(e.file).then(res => {
+		return res.data.data
+	})
 }
 
 const scrollLoad = (e: any) => {

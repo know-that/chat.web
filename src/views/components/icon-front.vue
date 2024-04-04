@@ -1,0 +1,25 @@
+<script lang="ts" setup>
+import { ref } from 'vue'
+import { createFromIconfontCN } from '@ant-design/icons-vue';
+const MyIcon = createFromIconfontCN({
+	scriptUrl: '//at.alicdn.com/t/c/font_4495000_v6lx4xub1fj.js', // 在 iconfont.cn 上生成
+});
+
+const props = defineProps({
+	type: {
+		type: String
+	},
+	size: {
+		type: [Number, String]
+	}
+})
+
+const style = ref({})
+if (props.size) {
+	style.value.fontSize = `${props.size}px`
+}
+</script>
+
+<template>
+	<MyIcon :type="`icon-${props.type}`" :style="style" />
+</template>
