@@ -51,6 +51,14 @@ watch(
     },
     { deep: true }
 )
+
+const setCurrentLastChat = async (item: any) => {
+	currentItem.data.lastChat = item
+}
+
+defineExpose({
+	setCurrentLastChat
+})
 </script>
 
 <template>
@@ -79,7 +87,10 @@ watch(
               <a>{{ item.source.nickname }}</a>
             </template>
             <template #description>
-              <div class="description">{{ item.last_chat?.message.content }}</div>
+              <div class="description">
+	              <span v-if="item.last_chat?.message_type === 'message_file'">[{{ item.last_chat?.message.type_text }}]</span>
+	              <span>{{ item.last_chat?.message.content }}</span>
+              </div>
             </template>
           </a-list-item-meta>
         </a-list-item>

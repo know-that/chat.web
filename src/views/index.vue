@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import {ref, reactive, nextTick, watch} from 'vue'
+import {ref, reactive, nextTick, watch, shallowRef} from 'vue'
 import Cookie from 'js-cookie'
 import { SettingOutlined } from '@ant-design/icons-vue'
 import AuthAvatar from '@/views/components/auth/auth-avatar.vue'
@@ -66,6 +66,11 @@ const chatSessionChoice = (item: any) => {
     current.isReload = true
   });
 }
+
+const chatSessionRef = shallowRef()
+const chatChange = async (value) => {
+	await chatSessionRef.value.setCurrentLastChat(value)
+}
 </script>
 
 <template>
@@ -77,11 +82,11 @@ const chatSessionChoice = (item: any) => {
       </a-layout-sider>
 
       <a-layout-sider class="center" :width="300">
-        <ChatSession :newData="newChatSessionData" @choice="chatSessionChoice" />
+        <ChatSession ref="chatSessionRef" :newData="newChatSessionData" @choice="chatSessionChoice" />
       </a-layout-sider>
 
       <a-layout class="right">
-        <Chat :isReload="current.isReload" :currentData="current.data" :newChatData="newChatSingleData.data" />
+        <Chat :isReload="current.isReload" :currentData="current.data" :newChatData="newChatSingleData.data" @change="chatChange" />
       </a-layout>
     </a-layout>
   </div>

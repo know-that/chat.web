@@ -18,6 +18,8 @@ const props = defineProps({
   newData: Object
 })
 
+const emits = defineEmits(['change'])
+
 const chatData = reactive({data: {} as any, loading: false})
 const chatListParams = reactive({
   receiver_user_id: undefined,
@@ -55,10 +57,11 @@ const chatList = async (receiverUserId = null) => {
 
 const form = ref({
   user_id: undefined,
+	message_type: 'message_text',
   message: ''
 })
 const loading = ref(false)
-const submit = async (e: any) => {
+const submit = async (e: any = {}) => {
 	// 阻止 shift + enter
 	if (e.shiftKey && e.key) {
 		return;
@@ -73,6 +76,7 @@ const submit = async (e: any) => {
 		form.value.user_id = props.currentData.source_id
 		const data = await sendMessage(form.value)
 		chatData.data.data.unshift(data.data)
+		emits('change', data.data)
 	} finally {
 		form.value.message = ''
 		loading.value = false
@@ -102,11 +106,19 @@ const emojiSelect = (e: any) => {
   popover.visible = false
 }
 
+/**
+ * 文件上传
+ * @param e
+ */
 const uploadFile = async (e: any) => {
 	// 进行上传
 	let data = await OSSUpload(e.file).then(res => {
 		return res.data.data
 	})
+	
+	form.value.message_type = 'message_file'
+	form.value.message = String(data.id)
+	await submit()
 }
 
 const scrollLoad = (e: any) => {
@@ -155,17 +167,23 @@ watch(
 
               <div class="message-item">
                 <div><b>{{ props.currentData.source.nickname }}</b></div>
-                <div class="content">
-                  <span>{{ item.message.content }}</span>
-                </div>
+	              <div class="content">
+		              <template v-if="item.message.type === 'image'">
+			              <a-image :src="item.message.upload.url" class="max-h-[200px] max-w-[200px]"></a-image>
+		              </template>
+		              <span v-else>{{ item.message.content }}</span>
+	              </div>
               </div>
             </div>
             <div v-else class="chat-item-right" align="right">
               <div class="message-item">
                 <div><b>{{ meData.data.nickname }}</b></div>
-                <div class="content">
-                  <span>{{ item.message.content }}</span>
-                </div>
+	              <div class="content">
+		              <template v-if="item.message.type === 'image'">
+			              <a-image :src="item.message.upload.url" class="max-h-[200px] max-w-[200px]"></a-image>
+		              </template>
+		              <span v-else>{{ item.message.content }}</span>
+	              </div>
               </div>
               <div>
                 <Avatar shape="square" :src="meData.data.avatar" :params="meData.data" />
