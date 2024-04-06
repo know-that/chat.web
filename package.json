@@ -10,6 +10,7 @@
     "type-check": "vue-tsc --noEmit"
   },
   "dependencies": {
+    "@ant-design/icons-vue": "^7.0.1",
     "@types/js-cookie": "^3.0.2",
     "ali-oss": "^6.20.0",
     "ant-design-vue": "^4.1.2",

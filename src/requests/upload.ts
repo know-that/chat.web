@@ -32,6 +32,7 @@ export async function OSSUpload(file) {
     // 客户端
     const client = new OSS({
         useFetch: true,
+        timeout: 600000,
 
         // yourRegion填写Bucket所在地域。以华东1（杭州）为例，yourRegion填写为oss-cn-hangzhou。
         region: credentials.Region,
@@ -67,6 +68,35 @@ export async function OSSUpload(file) {
 
     // 上传配置
     const options = {
+        // 获取分片上传进度、断点和返回值。
+        progress: (p, cpt, res) => {
+            console.log(p);
+        },
+        // 设置并发上传的分片数量。
+        parallel: 4,
+        // 设置分片大小。默认值为1 MB，最小值为100 KB。
+        partSize: 1024 * 1024,
+        // headers,
+        // 自定义元数据，通过HeadObject接口可以获取Object的元数据。
+        meta: { year: 2020, people: "test" },
+        mime: "text/plain",
+
+        headers: {
+            // 指定该Object被下载时的网页缓存行为。
+            "Cache-Control": "no-cache",
+            // 指定该Object被下载时的名称。
+            // 指定该Object被下载时的内容编码格式。
+            "Content-Encoding": "utf-8",
+            // 指定过期时间，单位为毫秒。
+            Expires: "60000",
+            // 指定Object的存储类型。
+            "x-oss-storage-class": "Standard",
+            // 指定Object标签，可同时设置多个标签。
+            "x-oss-tagging": "Tag1=1&Tag2=2",
+            // 指定初始化分片上传时是否覆盖同名Object。此处设置为true，表示禁止覆盖同名Object。
+            "x-oss-forbid-overwrite": "true",
+        },
+
         callback: {
             // 设置回调请求的服务器地址。
             url: "https://chat.knowthat.cn/websocket/uploads/ali-yun/callback",
@@ -96,5 +126,6 @@ export async function OSSUpload(file) {
         + moment().format("YYYY/MM/DD/")
         + Tool.uuid() + '.' + fileExtension
 
+    // return client.multipartUpload(filename, file, options)
     return client.put(filename, file, options)
 }

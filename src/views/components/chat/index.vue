@@ -8,17 +8,21 @@ const props = defineProps({
   isReload: Boolean
 })
 
-const emits = defineEmits(['change'])
+const emits = defineEmits(['chatChange'])
 </script>
 
 <template>
   <div class="chat h-full">
-    <SystemUser v-if="props.currentData.source_type === 'system_user' && props.isReload" :currentData="props.currentData" />
+    <SystemUser
+	    v-if="props.currentData.source_type === 'system_user' && props.isReload"
+	    :currentData="props.currentData"
+	    @change="() => emits('sessionChange')"
+    />
     <SingleChat
 	    v-else-if="props.currentData.source_type === 'user' && props.isReload"
 	    :currentData="props.currentData"
 	    :newData="props.newChatData"
-	    @change="value => emits('change', value)"
+	    @change="value => emits('chatChange', value)"
     />
     <a-empty v-else />
   </div>

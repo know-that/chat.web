@@ -11,6 +11,7 @@ const props = defineProps({
   currentData: Object,
   newChatData: Object
 })
+const emits = defineEmits(['change'])
 
 let noticeData = reactive({data: [], loading: false})
 const noticeParams = reactive({
@@ -74,6 +75,7 @@ const examineOk = async () => {
     .then(data => {
       Message.success(data.message || 'ok')
     })
+	emits('change')
   confirmAddParams.visible = false
 }
 </script>

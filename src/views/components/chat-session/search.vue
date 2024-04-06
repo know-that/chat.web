@@ -51,7 +51,7 @@ const handleFriendAdd = async () => {
         </template>
       </a-input>
 
-      <a-list item-layout="horizontal" :data-source="users.data">
+      <a-list class="mt-8" item-layout="horizontal" :data-source="users.data">
         <template #renderItem="{ item }">
           <a-list-item>
             <a-list-item-meta>
@@ -76,10 +76,21 @@ const handleFriendAdd = async () => {
       </a-list>
     </a-modal>
 
-    <a-modal v-model:open="confirmAddParams.visible" :width="400" title="添加好友申请" @ok="handleFriendAdd()" cancelText="取消" okText="发送请求">
+    <a-modal
+	    v-model:open="confirmAddParams.visible"
+	    :width="400"
+	    title="添加好友申请"
+	    @ok="handleFriendAdd()"
+	    cancelText="取消"
+	    okText="发送请求"
+	    :footerStyle="{marginTop: '30px'}"
+    >
       <a-textarea
         v-model:value="confirmAddParams.form.remark"
-        placeholder="textarea with clear icon" allow-clear show-count :maxlength="200"
+        placeholder="请表明你的来意"
+        allow-clear
+        show-count
+        :maxlength="200"
         :autoSize="{ minRows: 6, maxRows: 6 }"
       />
     </a-modal>
@@ -89,5 +100,12 @@ const handleFriendAdd = async () => {
 <style lang="less" scoped>
 ::v-deep(.input-search) {
   border-radius: 100px;
+}
+::v-deep(.ant-list-item) {
+	padding: 0;
+}
+::v-deep(.ant-modal-footer) {
+	margin-top: 30px;
+	text-align: right;
 }
 </style>

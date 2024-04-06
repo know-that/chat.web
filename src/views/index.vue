@@ -71,6 +71,9 @@ const chatSessionRef = shallowRef()
 const chatChange = async (value) => {
 	await chatSessionRef.value.setCurrentLastChat(value)
 }
+const sessionChange = async () => {
+	await chatSessionRef.value.chatSessionList()
+}
 </script>
 
 <template>
@@ -86,7 +89,13 @@ const chatChange = async (value) => {
       </a-layout-sider>
 
       <a-layout class="right">
-        <Chat :isReload="current.isReload" :currentData="current.data" :newChatData="newChatSingleData.data" @change="chatChange" />
+        <Chat
+	        :isReload="current.isReload"
+	        :currentData="current.data"
+	        :newChatData="newChatSingleData.data"
+	        @chatChange="chatChange"
+	        @sessionChange="sessionChange"
+        />
       </a-layout>
     </a-layout>
   </div>

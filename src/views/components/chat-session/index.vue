@@ -57,7 +57,8 @@ const setCurrentLastChat = async (item: any) => {
 }
 
 defineExpose({
-	setCurrentLastChat
+	setCurrentLastChat,
+	chatSessionList
 })
 </script>
 

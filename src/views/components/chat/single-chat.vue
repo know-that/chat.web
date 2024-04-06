@@ -7,6 +7,7 @@ import Avatar from '@/views/components/auth/avatar.vue'
 import { getChatList, sendMessage } from "@/requests/chat"
 import { userStore } from "@/stores/user"
 import { OSSUpload } from "@/requests/upload";
+import IconFront from "@/views/components/icon-front.vue";
 
 const store = userStore()
 let meData = {
@@ -166,7 +167,7 @@ watch(
               </div>
 
               <div class="message-item">
-                <div><b>{{ props.currentData.source.nickname }}</b></div>
+                <div class="mb-1"><b>{{ props.currentData.source.nickname }}</b></div>
 	              <div class="content">
 		              <template v-if="item.message.type === 'image'">
 			              <a-image :src="item.message.upload.url" class="max-h-[200px] max-w-[200px]"></a-image>
@@ -177,10 +178,52 @@ watch(
             </div>
             <div v-else class="chat-item-right" align="right">
               <div class="message-item">
-                <div><b>{{ meData.data.nickname }}</b></div>
-	              <div class="content">
+                <div class="mb-1"><b>{{ meData.data.nickname }}</b></div>
+	              <div class="content flex justify-end">
 		              <template v-if="item.message.type === 'image'">
 			              <a-image :src="item.message.upload.url" class="max-h-[200px] max-w-[200px]"></a-image>
+		              </template>
+		              <template v-else-if="item.message.type === 'video'">
+			              <a-card v-show="!item.show" class="w-[260px] p-[12px]">
+				              <div class="flex">
+					              <div class="flex items-start">
+						              <icon-front :type="item.message.upload.suffix" size="40"></icon-front>
+					              </div>
+					              <div class="ml-2 border-top text-left">
+						              <p>{{ item.message.upload.name }}</p>
+						              <p class="text-[12px] text-gray-400">{{ item.message.upload.size_text }}</p>
+					              </div>
+				              </div>
+				              <div class="text-info -mx-[12px] mt-2 -mb-[12px] p-[2px_12px] border-t flex">
+					              <view class="flex-1 text-left text-[12px] text-gray-400">.{{ item.message.upload.suffix }} 文件</view>
+					              <a @click="item.show = true" class="cursor-pointer">
+						              <PlayCircleOutlined />
+						              播放
+					              </a>
+				              </div>
+			              </a-card>
+			              <video v-show="item.show" width="200" height="200" controls>
+				              <source :src="item.message.upload.url" :type="item.message.upload.mime">
+			              </video>
+		              </template>
+		              <template v-else-if="item.message.type === 'file'">
+			              <a-card v-show="!item.show" class="w-[260px] p-[12px]">
+				              <div class="flex">
+					              <div class="flex items-start">
+						              <icon-front type="unknown" size="40"></icon-front>
+					              </div>
+					              <div class="ml-2 border-top text-left">
+						              <p>{{ item.message.upload.name }}</p>
+						              <p class="text-[12px] text-gray-400">{{ item.message.upload.size_text }}</p>
+					              </div>
+				              </div>
+				              <div class="text-info -mx-[12px] mt-2 -mb-[12px] p-[2px_12px] border-t flex">
+					              <view class="flex-1 text-left text-[12px] text-gray-400">.{{ item.message.upload.suffix }} 文件</view>
+				              </div>
+			              </a-card>
+			              <video v-show="item.show" width="200" height="200" controls>
+				              <source :src="item.message.upload.url" :type="item.message.upload.mime">
+			              </video>
 		              </template>
 		              <span v-else>{{ item.message.content }}</span>
 	              </div>
@@ -293,7 +336,7 @@ watch(
           width: 80%;
           position: relative;
 
-          span {
+          >span {
             display: inline-block;
             position: relative;
             padding: 10px;
@@ -301,7 +344,7 @@ watch(
             overflow: hidden;
             z-index: 1;
           }
-          span:after {
+          >span:after {
             content: '';
             position: absolute;
             top: 0;
@@ -357,5 +400,9 @@ watch(
       font-size: 20px;
     }
   }
+}
+
+::v-deep(.ant-card-body) {
+	padding: 0;
 }
 </style>
