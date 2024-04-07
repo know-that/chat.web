@@ -120,6 +120,8 @@ const uploadFile = async (e: any) => {
 	form.value.message_type = 'message_file'
 	form.value.message = String(data.id)
 	await submit()
+  form.value.message_type = 'message_text'
+  form.value.message = ''
 }
 
 const scrollLoad = (e: any) => {
