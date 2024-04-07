@@ -2,6 +2,7 @@ import OSS from 'ali-oss'
 import Tool from '@/utils/tool'
 import moment from "moment";
 import HTTP from "@/utils/axios";
+import * as QiNiu from 'qiniu-js'
 
 /**
  * 获取上传凭证
@@ -9,7 +10,7 @@ import HTTP from "@/utils/axios";
  */
 export function getCredentials() {
     return HTTP({
-        url: `/uploads/ali-yun/credentials`,
+        url: `/uploads/credentials`,
         method: 'get'
     })
 }
@@ -29,38 +30,42 @@ export async function OSSUpload(file) {
             throw error.response.data.message || "获取失败，请联系管理员！"
         })
 
+    if (credentials.driver === 'QiNiuKoDo') {
+        return qiNiuUpload(file, credentials)
+    }
+
     // 客户端
     const client = new OSS({
         useFetch: true,
         timeout: 600000,
 
         // yourRegion填写Bucket所在地域。以华东1（杭州）为例，yourRegion填写为oss-cn-hangzhou。
-        region: credentials.Region,
+        region: credentials.data.Region,
 
         // 从STS服务获取的临时访问密钥（AccessKey ID和AccessKey Secret）。
-        accessKeyId: credentials.AccessKeyId,
-        accessKeySecret: credentials.AccessKeySecret,
+        accessKeyId: credentials.data.AccessKeyId,
+        accessKeySecret: credentials.data.AccessKeySecret,
 
         // 填写Bucket名称，例如examplebucket。
-        bucket: credentials.Bucket,
+        bucket: credentials.data.Bucket,
 
         // 从STS服务获取的安全令牌（SecurityToken）。
-        stsToken: credentials.SecurityToken,
+        stsToken: credentials.data.SecurityToken,
 
         // 过期刷新
         refreshSTSToken: async () => {
-            const credentials = await this.credentials().then(res => {
-                return res.data.data
+            const credentials: any = await getCredentials().then(res => {
+                return res.data
             })
                 .catch(error => {
                     throw error.response.data.message || "获取失败，请联系管理员！"
                 })
             return {
-                region: credentials.Region,
-                accessKeyId: credentials.AccessKeyId,
-                accessKeySecret: credentials.AccessKeySecret,
-                bucket: credentials.Bucket,
-                stsToken: credentials.SecurityToken,
+                region: credentials.data.Region,
+                accessKeyId: credentials.data.AccessKeyId,
+                accessKeySecret: credentials.data.AccessKeySecret,
+                bucket: credentials.data.Bucket,
+                stsToken: credentials.data.SecurityToken,
             }
         },
         refreshSTSTokenInterval: 300000
@@ -99,7 +104,7 @@ export async function OSSUpload(file) {
 
         callback: {
             // 设置回调请求的服务器地址。
-            url: "https://chat.knowthat.cn/websocket/uploads/ali-yun/callback",
+            url: "https://chat.knowthat.cn/websocket/uploads/callback",
 
             // 设置回调请求消息头中Host的值，即您的服务器配置的Host值。
             // host: `${credentials.Region}.aliyuncs.com`,
@@ -128,4 +133,30 @@ export async function OSSUpload(file) {
 
     // return client.multipartUpload(filename, file, options)
     return client.put(filename, file, options)
+}
+
+export async function qiNiuUpload(file, credentials) {
+
+    const aaa = {
+        useCdnDomain: true,
+        region: QiNiu.region.z2
+    };
+    const putExtra = {
+        customVars: {}
+    };
+    const observable = QiNiu.upload(file, null, credentials.data.token, putExtra, aaa)
+
+    observable.subscribe({
+        next(res) {
+            // 可以在这里添加上传进度条更新的代码
+            console.log(res);
+        },
+        error(err) {
+            console.error(err);
+        },
+        complete(res) {
+            console.log('upload success', res);
+            // 上传完成后的操作，例如更新UI等
+        },
+    });
 }
