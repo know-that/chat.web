@@ -76,6 +76,7 @@ const submit = async (e: any = {}) => {
 		}
 		form.value.user_id = props.currentData.source_id
 		const data = await sendMessage(form.value)
+		schedule.value = 100
 		chatData.data.data.unshift(data.data)
 		emits('change', data.data)
 	} finally {
@@ -111,12 +112,13 @@ const emojiSelect = (e: any) => {
  * 文件上传
  * @param e
  */
+const schedule = ref(0)
 const uploadFile = async (e: any) => {
 	// 进行上传
-	let data = await OSSUpload(e.file).then(res => {
-		return res.data.data
+	loading.value = true
+	let data = await OSSUpload(e.file, (data: any) => {
+		schedule.value = data.total.percent.toFixed(2)
 	})
-	
 	form.value.message_type = 'message_file'
 	form.value.message = String(data.id)
 	await submit()
@@ -256,7 +258,10 @@ watch(
 	      <a-form @submit="submit">
 		      <a-textarea v-model:value="form.message" ref="myTextarea" class="textarea" :bordered="false" @pressEnter="submit($event)" />
 		      <div class="submit" align="right">
-			      <a-button size="large" class="!px-8" type="primary" :loading="loading" html-type="submit">发送</a-button>
+			      <a-button size="large" class="!px-8" type="primary" :loading="loading" html-type="submit">
+				      <span v-if="loading">{{ schedule }}%</span>
+				      <span v-else>发送</span>
+			      </a-button>
 		      </div>
 	      </a-form>
       </a-layout-footer>

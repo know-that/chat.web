@@ -20,7 +20,7 @@ export function getCredentials() {
  * @param file
  * @constructor
  */
-export async function OSSUpload(file) {
+export async function OSSUpload(file, next = undefined) {
 
     // 获取上传凭证
     const credentials: any = await getCredentials().then(res => {
@@ -31,7 +31,7 @@ export async function OSSUpload(file) {
         })
 
     if (credentials.driver === 'QiNiuKoDo') {
-        return qiNiuUpload(file, credentials)
+        return qiNiuUpload(file, credentials, next)
     }
 
     // 客户端
@@ -135,28 +135,29 @@ export async function OSSUpload(file) {
     return client.put(filename, file, options)
 }
 
-export async function qiNiuUpload(file, credentials) {
-
-    const aaa = {
+export async function qiNiuUpload(file, credentials, next) {
+    const config = {
         useCdnDomain: true,
-        region: QiNiu.region.z2
+        region: QiNiu.region.z2,
+        chunkSize: 2
     };
     const putExtra = {
         customVars: {}
     };
-    const observable = QiNiu.upload(file, null, credentials.data.token, putExtra, aaa)
 
-    observable.subscribe({
-        next(res) {
-            // 可以在这里添加上传进度条更新的代码
-            console.log(res);
-        },
-        error(err) {
-            console.error(err);
-        },
-        complete(res) {
-            console.log('upload success', res);
-            // 上传完成后的操作，例如更新UI等
-        },
-    });
+    return new Promise((resolve, reject) => {
+        const observable = QiNiu.upload(file, null, credentials.data.token, putExtra, config)
+
+        observable.subscribe({
+            next(res) {
+                next(res)
+            },
+            error(err) {
+                reject(err)
+            },
+            complete(res) {
+                resolve(res.data)
+            },
+        });
+    })
 }
