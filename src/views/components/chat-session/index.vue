@@ -1,8 +1,9 @@
 <script lang="ts" setup>
 import {reactive, watch} from "vue"
-import { PlusCircleOutlined } from '@ant-design/icons-vue'
+import { PlusCircleOutlined, UserAddOutlined, UsergroupAddOutlined } from '@ant-design/icons-vue'
 import { getChatSessionList } from "@/requests/chat"
 import Search from '@/views/components/chat-session/search.vue'
+import CreateGroup from '@/views/components/chat-session/create-group.vue'
 
 const emit = defineEmits(['choice'])
 const props = defineProps({
@@ -24,7 +25,7 @@ chatSessionList()
 const currentItem = reactive({data: {}})
 const choiceChat = (item, index) => {
   if (chatSessionData.data[index].last_chat) {
-    chatSessionData.data[index].last_chat.message.is_read = 1
+    chatSessionData.data[index].last_chat.is_read = 1
   }
   currentItem.data = item
   emit('choice', item)
@@ -33,13 +34,16 @@ const choiceChat = (item, index) => {
 const searchParams = reactive({
   visible: false
 })
+const createGroupParams = reactive({
+  visible: false
+})
 
 const showDot = (item) => {
   let bool
   if (item.last_chat_type === 'chat_single') {
-      bool = item.last_chat?.message.is_read === 0 && item.last_chat.receiver_user_id !== item.user_id
+      bool = item.last_chat?.is_read === 0 && item.last_chat.receiver_user_id !== item.user_id
   } else {
-      bool = item.last_chat?.message.is_read === 0
+      bool = item.last_chat?.is_read === 0
   }
   return bool
 }
@@ -65,14 +69,26 @@ defineExpose({
 <template>
   <div class="chat-session flex flex-col">
     <div class="search">
-      <a-row>
-        <a-col :span="22">
-          <a-input :bordered="false" placeholder="搜索会话..." allowClear />
-        </a-col>
-        <a-col :span="2">
-          <a class="add info"><plus-circle-outlined @click="searchParams.visible = true" /></a>
-        </a-col>
-      </a-row>
+	    <div class="h-full flex items-center">
+		    <a-input class="flex-1" :bordered="false" placeholder="搜索会话..." allowClear />
+		    <a-dropdown>
+			    <PlusCircleOutlined class="text-[20px] hover:text-[#00c1de]" />
+			    <template #overlay>
+				    <a-menu>
+					    <a-menu-item>
+						    <a href="javascript:;" @click="searchParams.visible = true">
+							    <UserAddOutlined /> 查找朋友
+						    </a>
+					    </a-menu-item>
+					    <a-menu-item>
+						    <a href="javascript:;" @click="createGroupParams.visible = true">
+							    <UsergroupAddOutlined /> 创建群聊
+						    </a>
+					    </a-menu-item>
+				    </a-menu>
+			    </template>
+		    </a-dropdown>
+	    </div>
     </div>
 
     <a-list class="flex-1 max-h-full overflow-y-auto" item-layout="horizontal" :data-source="chatSessionData.data">
@@ -81,11 +97,15 @@ defineExpose({
           <a-list-item-meta>
             <template #avatar>
               <a-badge :dot="showDot(item)">
-                <a-avatar shape="square" :size="48" :src="item.source.avatar">{{ item.source.nickname }}</a-avatar>
+                <a-avatar shape="square" :size="48" :src="item.source.avatar">
+	                <div>
+		                {{ item.source.nickname.substring(0,2) }}
+	                </div>
+                </a-avatar>
               </a-badge>
             </template>
             <template #title>
-              <a>{{ item.source.nickname }}</a>
+              <div class="truncate">{{ item.source.nickname }}</div>
             </template>
             <template #description>
               <div class="description">
@@ -98,7 +118,8 @@ defineExpose({
       </template>
     </a-list>
 
-    <Search :params="searchParams" />
+    <Search v-model="searchParams.visible" />
+    <CreateGroup v-model="createGroupParams.visible" />
   </div>
 </template>
 

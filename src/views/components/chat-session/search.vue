@@ -5,9 +5,7 @@ import { getSearchList } from '@/requests/search'
 import { addFriendRequest } from '@/requests/friend'
 
 const Message = getCurrentInstance()?.appContext.config.globalProperties.$message
-const props = defineProps({
-  params: Object
-})
+const visible = defineModel()
 
 const form = reactive({
   search: ''
@@ -44,7 +42,7 @@ const handleFriendAdd = async () => {
 
 <template>
   <div>
-    <a-modal v-model:open="props.params.visible" :width="600" :footer="null" title="搜索用户">
+    <a-modal v-model:open="visible" :width="600" :footer="null" title="搜索用户">
       <a-input class="input-search" v-model:value="form.search" size="large" @pressEnter="submit()" placeholder="输入昵称、账号查找好友">
         <template #suffix>
           <search-outlined @click="submit()" />

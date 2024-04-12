@@ -24,3 +24,10 @@ export function examineFriendRequest(id, params) {
     })
 }
 
+export function getFriends(params) {
+    return HTTP({
+        url: `/friends`,
+        method: 'get',
+        params
+    })
+}

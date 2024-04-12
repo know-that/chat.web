@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import SystemUser from "./system-user.vue"
-import SingleChat from "./single-chat.vue"
+import ChatSingle from "./chat-single.vue"
+import ChatGroup from "./chat-group.vue"
 
 const props = defineProps({
   currentData: Object,
@@ -18,12 +19,18 @@ const emits = defineEmits(['chatChange'])
 	    :currentData="props.currentData"
 	    @change="() => emits('sessionChange')"
     />
-    <SingleChat
+    <ChatSingle
 	    v-else-if="props.currentData.source_type === 'user' && props.isReload"
 	    :currentData="props.currentData"
 	    :newData="props.newChatData"
 	    @change="value => emits('chatChange', value)"
     />
+	  <ChatGroup
+		  v-else-if="props.currentData.source_type === 'group_chat' && props.isReload"
+		  :currentData="props.currentData"
+		  :newData="props.newChatData"
+		  @change="value => emits('chatChange', value)"
+	  />
     <a-empty v-else />
   </div>
 </template>
