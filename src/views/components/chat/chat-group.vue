@@ -57,7 +57,7 @@ const chatList = async (groupChatId = null) => {
 }
 
 const form = ref({
-  user_id: undefined,
+	group_chat_id: '',
 	message_type: 'message_text',
   message: ''
 })
@@ -74,7 +74,6 @@ const submit = async (e: any = {}) => {
 			message.warning("不能发送空消息")
 			return
 		}
-		form.value.user_id = props.currentData.source_id
 		const data = await sendMessageChatGroup(form.value)
 		schedule.value = 100
 		chatData.data.data.unshift(data.data)
@@ -138,6 +137,7 @@ const scrollLoad = (e: any) => {
 watch(
     () => props.currentData,
     (newData, oldData) => {
+			form.value.group_chat_id = newData.source_id
       chatList(newData.source_id)
     },
     { deep: true, immediate: true }
@@ -165,13 +165,13 @@ watch(
         <div class="chat-list" v-if="chatData.data?.data && chatData.data.data.length > 0" @scroll="scrollLoad">
           <div v-for="(item, index) in chatData.data?.data" :key="index">
             <div v-if="item.is_system === 1" class="text-gray-400 text-center">{{ item.message.content }}</div>
-            <div v-else-if="item.receiver_user_id === props.currentData.source?.id" class="flex">
+            <div v-else-if="item.sender_user_id !== meData.data.id" class="flex">
               <div>
-                <Avatar shape="square" :src="props.currentData.source.avatar" :params="props.currentData.source" />
+                <Avatar shape="square" :src="item.sender_user.avatar" :params="item.sender_user" />
               </div>
 
               <div class="w-full px-2">
-                <div class="mb-1"><b>{{ props.currentData.source.nickname }}</b></div>
+                <div class="mb-1"><b>{{ item.sender_user.nickname }}</b></div>
 	              <Bubble direction="left" :item="item" />
               </div>
             </div>
