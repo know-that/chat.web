@@ -2,7 +2,7 @@
 import {ref, shallowRef} from 'vue'
 import { createFromIconfontCN } from '@ant-design/icons-vue';
 const MyIcon = createFromIconfontCN({
-	scriptUrl: '//at.alicdn.com/t/c/font_4495000_36sxqh5af0d.js', // 在 iconfont.cn 上生成
+	scriptUrl: '//at.alicdn.com/t/c/font_4495000_9zuc6icizwo.js', // 在 iconfont.cn 上生成
 });
 
 const props = defineProps({
@@ -20,7 +20,6 @@ if (props.size) {
 }
 
 const myIconRef = shallowRef()
-console.log(myIconRef)
 </script>
 
 <template>

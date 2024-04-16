@@ -7,7 +7,7 @@ import CreateGroup from '@/views/components/chat-session/create-group.vue'
 
 const emit = defineEmits(['choice'])
 const props = defineProps({
-  newData: Object
+  newData: Object as any
 })
 
 let chatSessionData = reactive({data: []})

@@ -18,9 +18,10 @@ export function getCredentials() {
 /**
  * 上传
  * @param file
+ * @param next
  * @constructor
  */
-export async function OSSUpload(file, next = undefined) {
+export async function OSSUpload(file: any, next = undefined) {
 
     // 获取上传凭证
     const credentials: any = await getCredentials().then(res => {
@@ -74,7 +75,7 @@ export async function OSSUpload(file, next = undefined) {
     // 上传配置
     const options = {
         // 获取分片上传进度、断点和返回值。
-        progress: (p, cpt, res) => {
+        progress: (p: any, cpt: any, res: any) => {
             console.log(p);
         },
         // 设置并发上传的分片数量。
@@ -135,7 +136,7 @@ export async function OSSUpload(file, next = undefined) {
     return client.put(filename, file, options)
 }
 
-export async function qiNiuUpload(file, credentials, next) {
+export async function qiNiuUpload(file: any, credentials: any, next: any) {
     const config = {
         useCdnDomain: true,
         region: QiNiu.region.z2,
@@ -150,7 +151,7 @@ export async function qiNiuUpload(file, credentials, next) {
 
         observable.subscribe({
             next(res) {
-                next(res)
+                next && next(res)
             },
             error(err) {
                 reject(err)

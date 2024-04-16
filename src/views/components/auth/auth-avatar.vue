@@ -1,23 +1,17 @@
 <script lang="ts" setup>
-import { reactive } from "vue"
+import {computed, reactive, ref, shallowRef} from "vue"
 import Cookie from 'js-cookie'
 import Login from '@/views/components/auth/Login.vue'
 import Register from '@/views/components/auth/Register.vue'
 import Avatar from '@/views/components/auth/avatar.vue'
 import { userStore } from '@/stores/user'
 import { getMe } from '@/requests/auth'
+import Bus from '@/utils/bus'
 
 const store = userStore()
-let meData = {
-  data: store.$state.user
-}
+let meData = computed(() => store.$state.userData)
 const getMeData = async () => {
-  let data = await getMe().then(data => {
-    return data.data
-  })
-
-  // 设置用户信息
-  store.$patch({user: data})
+	await store.getMeData()
 }
 getMeData()
 
@@ -35,6 +29,7 @@ const loginChange = (mode) => {
   registerParams.visible = mode === 'register'
 }
 
+const avatarRef = shallowRef()
 const logout = () => {
   Cookie.remove("Authorization")
   location.reload()
@@ -43,9 +38,10 @@ const logout = () => {
 
 <template>
   <div>
-    <Avatar v-if="meData.data.id" :src="meData.data.avatar" :params="meData.data">
+    <Avatar v-if="meData.id" ref="avatarRef" :src="meData.avatar" :params="meData">
       <template #actions>
-        <div align="right">
+        <div class="mt-2" align="right">
+          <a-button class="mr-2" size="small" @click="Bus.emit('index.editUserInfo');avatarRef.switchVisible()">编辑资料</a-button>
           <a-button size="small" @click="logout">退出登录</a-button>
         </div>
       </template>

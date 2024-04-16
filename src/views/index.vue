@@ -6,6 +6,8 @@ import AuthAvatar from '@/views/components/auth/auth-avatar.vue'
 import Chat from '@/views/components/chat/index.vue'
 import ChatSession from '@/views/components/chat-session/index.vue'
 import moment from 'moment'
+import SettingUserInfo from '@/views/components/setting/user-info.vue'
+import Bus from '@/utils/bus'
 
 const newChatSingleData = ref({data: {}})
 const newChatSessionData = ref({update_at: ''})
@@ -68,16 +70,21 @@ const chatSessionChoice = (item: any) => {
 }
 
 const chatSessionRef = shallowRef()
-const chatChange = async (value) => {
+const chatChange = async (value: any) => {
 	await chatSessionRef.value.setCurrentLastChat(value)
 }
 const sessionChange = async () => {
 	await chatSessionRef.value.chatSessionList()
 }
+
+const settingUserInfoRef = shallowRef()
+Bus.on('index.editUserInfo', () => {
+	settingUserInfoRef.value.open()
+})
 </script>
 
 <template>
-  <div class="body w-[1200px] h-[800px]">
+  <div class="body relative overflow-hidden w-[1200px] h-[800px]">
     <a-layout class="h-full">
       <a-layout-sider class="left" :width="70">
         <AuthAvatar class="avatar" />
@@ -98,6 +105,8 @@ const sessionChange = async () => {
         />
       </a-layout>
     </a-layout>
+	  
+	  <SettingUserInfo ref="settingUserInfoRef" />
   </div>
 </template>
 
