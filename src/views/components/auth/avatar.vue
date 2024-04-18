@@ -37,8 +37,8 @@ defineExpose({
         <a-avatar :shape="shape" :size="size" :src="src"></a-avatar> &nbsp;
         <div>
           {{ params.nickname }}
-          <man-outlined v-if="params.gender === 1" />
-          <woman-outlined v-else />
+          <ManOutlined v-if="params.gender === 1" />
+          <WomanOutlined v-else />
         </div>
       </div>
     </template>

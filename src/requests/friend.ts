@@ -1,6 +1,6 @@
 import HTTP from '@/utils/axios'
 
-export function addFriendRequest(params) {
+export function addFriendRequest(params: any = {}) {
     return HTTP({
         url: '/friend-request',
         method: 'post',
@@ -8,7 +8,7 @@ export function addFriendRequest(params) {
     })
 }
 
-export function getFriendRequest(params) {
+export function getFriendRequest(params: any = {}) {
     return HTTP({
         url: '/friend-request',
         method: 'get',
@@ -16,7 +16,7 @@ export function getFriendRequest(params) {
     })
 }
 
-export function examineFriendRequest(id, params) {
+export function examineFriendRequest(id: any, params: any = {}) {
     return HTTP({
         url: `/friend-request/${id}/examine`,
         method: 'put',
@@ -24,7 +24,7 @@ export function examineFriendRequest(id, params) {
     })
 }
 
-export function getFriends(params) {
+export function getFriends(params: any = {}) {
     return HTTP({
         url: `/friends`,
         method: 'get',

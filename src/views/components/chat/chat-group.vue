@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { reactive, ref, watch } from "vue"
+import {computed, reactive, ref, watch} from "vue"
 import { SmileOutlined, FolderOpenOutlined, EllipsisOutlined } from '@ant-design/icons-vue'
 import { message } from 'ant-design-vue'
 import { EmojiPicker } from 'vue3-twemoji-picker-final'
@@ -10,9 +10,7 @@ import { OSSUpload } from "@/requests/upload"
 import Bubble from "@/views/components/chat/bubble.vue"
 
 const store = userStore()
-let meData = {
-  data: store.$state.user as any
-}
+let meData = computed(() => store.$state.userData)
 
 const props = defineProps({
   currentData: Object as any,
@@ -165,7 +163,7 @@ watch(
         <div class="chat-list" v-if="chatData.data?.data && chatData.data.data.length > 0" @scroll="scrollLoad">
           <div v-for="(item, index) in chatData.data?.data" :key="index">
             <div v-if="item.is_system === 1" class="text-gray-400 text-center">{{ item.message.content }}</div>
-            <div v-else-if="item.sender_user_id !== meData.data.id" class="flex">
+            <div v-else-if="item.sender_user_id !== meData.id" class="flex">
               <div>
                 <Avatar shape="square" :src="item.sender_user.avatar" :params="item.sender_user" />
               </div>
@@ -177,11 +175,11 @@ watch(
             </div>
             <div v-else class="flex" align="right">
 	            <div class="w-full px-2">
-                <div class="mb-1"><b>{{ meData.data.nickname }}</b></div>
+                <div class="mb-1"><b>{{ meData.nickname }}</b></div>
 	              <Bubble direction="right" :item="item" />
               </div>
               <div>
-                <Avatar shape="square" :src="meData.data.avatar" :params="meData.data" />
+                <Avatar shape="square" :src="meData.avatar" :params="meData" />
               </div>
             </div>
           </div>

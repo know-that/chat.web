@@ -1,13 +1,15 @@
 <script lang="ts" setup>
 import {ref, reactive, nextTick, watch, shallowRef} from 'vue'
 import Cookie from 'js-cookie'
-import { SettingOutlined } from '@ant-design/icons-vue'
+import { SettingOutlined, MessageOutlined, MessageFilled } from '@ant-design/icons-vue'
 import AuthAvatar from '@/views/components/auth/auth-avatar.vue'
 import Chat from '@/views/components/chat/index.vue'
 import ChatSession from '@/views/components/chat-session/index.vue'
 import moment from 'moment'
 import SettingUserInfo from '@/views/components/setting/user-info.vue'
 import Bus from '@/utils/bus'
+import IconFront from "@/views/components/icon-front.vue"
+import Friend from "@/views/components/friend/index.vue"
 
 const newChatSingleData = ref({data: {}})
 const newChatSessionData = ref({update_at: ''})
@@ -81,29 +83,51 @@ const settingUserInfoRef = shallowRef()
 Bus.on('index.editUserInfo', () => {
 	settingUserInfoRef.value.open()
 })
+
+
+const active = ref('chat')
 </script>
 
 <template>
   <div class="body relative overflow-hidden w-[1200px] h-[800px]">
     <a-layout class="h-full">
-      <a-layout-sider class="left" :width="70">
-        <AuthAvatar class="avatar" />
-        <setting-outlined class="setting" />
+      <a-layout-sider :width="70">
+	      <div class="h-full flex flex-col items-center">
+		      <AuthAvatar class="avatar py-3 cursor-pointer" />
+		      
+		      <div class="flex flex-auto flex-col items-center gap-4 py-3 text-[#00c1de] text-2xl">
+			      <MessageFilled v-if="active === 'chat'" />
+			      <MessageOutlined v-else @click="active = 'chat'" />
+			      
+			      <IconFront v-if="active === 'friend'" type="friend-fill" />
+			      <IconFront v-else type="friend" @click="active = 'friend'" />
+		      </div>
+		      
+		      <div class="flex justify-center py-3">
+			      <SettingOutlined class="text-3xl" />
+		      </div>
+	      </div>
       </a-layout-sider>
 
-      <a-layout-sider class="center" :width="300">
-        <ChatSession ref="chatSessionRef" :newData="newChatSessionData" @choice="chatSessionChoice" />
-      </a-layout-sider>
-
-      <a-layout class="right">
-        <Chat
-	        :isReload="current.isReload"
-	        :currentData="current.data"
-	        :newChatData="newChatSingleData.data"
-	        @chatChange="chatChange"
-	        @sessionChange="sessionChange"
-        />
-      </a-layout>
+      <template v-if="active === 'chat'">
+	      <a-layout-sider class="center" :width="300">
+		      <ChatSession ref="chatSessionRef" :newData="newChatSessionData" @choice="chatSessionChoice" />
+	      </a-layout-sider>
+	      
+	      <a-layout class="right">
+		      <Chat
+			      :isReload="current.isReload"
+			      :currentData="current.data"
+			      :newChatData="newChatSingleData.data"
+			      @chatChange="chatChange"
+			      @sessionChange="sessionChange"
+		      />
+	      </a-layout>
+      </template>
+	    
+	    <template v-if="active === 'friend'">
+		    <Friend />
+	    </template>
     </a-layout>
 	  
 	  <SettingUserInfo ref="settingUserInfoRef" />
@@ -121,27 +145,6 @@ Bus.on('index.editUserInfo', () => {
     }
     .ant-layout-header, .ant-layout-content, .ant-layout-footer {
       padding: 8px;
-    }
-  }
-
-  .left {
-    position: relative;
-
-    .avatar {
-      position: absolute;
-      top: 11px;
-      left: 11px;
-      right: 11px;
-      cursor: pointer;
-    }
-
-    .setting {
-      position: absolute;
-      bottom: 16px;
-      left: 22px;
-      right: 22px;
-      font-size: 26px;
-      cursor: pointer;
     }
   }
 

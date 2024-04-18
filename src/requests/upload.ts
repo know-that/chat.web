@@ -21,7 +21,7 @@ export function getCredentials() {
  * @param next
  * @constructor
  */
-export async function OSSUpload(file: any, next = undefined) {
+export async function OSSUpload(file: any, next: any = undefined) {
 
     // 获取上传凭证
     const credentials: any = await getCredentials().then(res => {
