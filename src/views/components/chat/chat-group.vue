@@ -8,6 +8,7 @@ import { getChatGroup, sendMessageChatGroup } from "@/requests/chat"
 import { userStore } from "@/stores/user"
 import { OSSUpload } from "@/requests/upload"
 import Bubble from "@/views/components/chat/bubble.vue"
+import Nickname from "@/views/components/auth/nickname.vue";
 
 const store = userStore()
 let meData = computed(() => store.$state.userData)
@@ -39,7 +40,7 @@ const chatList = async (groupChatId = null) => {
     return data.data
   })
 
-  if (!chatData.data.data) {
+  if (!chatData.data.data || chatListParams.page === 1) {
     chatData.data = data
   } else {
     data.data.forEach((item: any) => {
@@ -153,7 +154,7 @@ watch(
   <div class="single-chat">
     <a-layout v-if="props.currentData.source.nickname">
       <a-layout-header class="left">
-        <div class="header-title">
+	      <div class="header-title ml-2">
           <span class="title">{{ currentData.source.nickname }}</span>
           <ellipsis-outlined class="actions" />
         </div>
@@ -169,13 +170,14 @@ watch(
               </div>
 
               <div class="w-full px-2">
-                <div class="mb-1"><b>{{ item.sender_user.nickname }}</b></div>
+                <div class="mb-1">
+	                <b><Nickname :value="item.sender_user?.friend?.alias || item.sender_user.nickname" :id="item.sender_user.id" /></b>
+                </div>
 	              <Bubble direction="left" :item="item" />
               </div>
             </div>
             <div v-else class="flex" align="right">
-	            <div class="w-full px-2">
-                <div class="mb-1"><b>{{ meData.nickname }}</b></div>
+	            <div class="w-full px-2 flex justify-end items-center">
 	              <Bubble direction="right" :item="item" />
               </div>
               <div>

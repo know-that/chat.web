@@ -1,6 +1,8 @@
 <script lang="ts" setup>
-import IconFront from "@/views/components/icon-front.vue";
-import { computed } from "vue";
+import IconFront from "@/views/components/icon-front.vue"
+import { computed } from "vue"
+import { PlayCircleOutlined } from '@ant-design/icons-vue'
+
 const props = defineProps({
 	direction: {
 		type: String,

@@ -31,3 +31,11 @@ export function getFriends(params: any = {}) {
         params
     })
 }
+
+export function updateAliasRequest(params: any = {}) {
+    return HTTP({
+        url: `/friends/${params.id}/alias`,
+        method: 'put',
+        data: params
+    })
+}

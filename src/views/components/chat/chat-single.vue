@@ -8,6 +8,7 @@ import { getChatSingle, sendMessageChatSingle } from "@/requests/chat"
 import { userStore } from "@/stores/user"
 import { OSSUpload } from "@/requests/upload"
 import Bubble from "@/views/components/chat/bubble.vue"
+import Nickname from "@/views/components/auth/nickname.vue";
 
 const store = userStore()
 let meData = computed(() => store.$state.userData)
@@ -38,8 +39,8 @@ const chatList = async (receiverUserId = null) => {
   let data = await getChatSingle(chatListParams).then(data => {
     return data.data
   })
-
-  if (!chatData.data.data) {
+	
+	if (!chatData.data.data || chatListParams.page === 1) {
     chatData.data = data
   } else {
     data.data.forEach((item: any) => {
@@ -153,8 +154,14 @@ watch(
   <div class="single-chat">
     <a-layout v-if="props.currentData.source.nickname">
       <a-layout-header class="left">
-        <div class="header-title">
-          <span class="title">{{ currentData.source.nickname }}</span>
+        <div class="header-title ml-2">
+          <span class="title">
+	          <span v-if="props.currentData.source?.friend?.alias">
+		          <Nickname :value="props.currentData.source?.friend?.alias" :id="props.currentData.source.id" />
+		          <span class="text-gray-400 text-base font-normal">（{{ currentData.source.nickname }}）</span>
+	          </span>
+	          <span v-else>{{ currentData.source.nickname }}</span>
+          </span>
           <ellipsis-outlined class="actions" />
         </div>
       </a-layout-header>
@@ -163,19 +170,20 @@ watch(
         <div class="chat-list" v-if="chatData.data?.data && chatData.data.data.length > 0" @scroll="scrollLoad">
           <div v-for="(item, index) in chatData.data?.data" :key="index">
             <div v-if="item.is_system === 1" class="text-gray-400 text-center">{{ item.message.content }}</div>
-            <div v-else-if="item.receiver_user_id === props.currentData.source?.id" class="flex">
-              <div>
-                <Avatar shape="square" :src="props.currentData.source.avatar" :params="props.currentData.source" />
-              </div>
-
-              <div class="w-full px-2">
-                <div class="mb-1"><b>{{ props.currentData.source.nickname }}</b></div>
-	              <Bubble direction="left" :item="item" />
-              </div>
-            </div>
+	          <div v-else-if="item.sender_user_id !== meData.id" class="flex">
+		          <div>
+			          <Avatar shape="square" :src="item.sender_user.avatar" :params="item.sender_user" />
+		          </div>
+		          
+		          <div class="w-full px-2">
+			          <div class="mb-1">
+				          <b><Nickname :value="item.sender_user?.friend?.alias || item.sender_user.nickname" :id="item.sender_user.id" /></b>
+			          </div>
+			          <Bubble direction="left" :item="item" />
+		          </div>
+	          </div>
             <div v-else class="flex" align="right">
-	            <div class="w-full px-2">
-                <div class="mb-1"><b>{{ meData.nickname }}</b></div>
+	            <div class="w-full px-2 flex justify-end items-center">
 	              <Bubble direction="right" :item="item" />
               </div>
               <div>

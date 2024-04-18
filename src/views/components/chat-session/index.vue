@@ -4,6 +4,7 @@ import { PlusCircleOutlined, UserAddOutlined, UsergroupAddOutlined } from '@ant-
 import { getChatSessionList } from "@/requests/chat"
 import Search from '@/views/components/chat-session/search.vue'
 import CreateGroup from '@/views/components/chat-session/create-group.vue'
+import Nickname from "@/views/components/auth/nickname.vue";
 
 const emit = defineEmits(['choice'])
 const props = defineProps({
@@ -105,7 +106,9 @@ defineExpose({
               </a-badge>
             </template>
             <template #title>
-              <div class="truncate">{{ item.source.nickname }}</div>
+              <div class="truncate">
+	              <Nickname :value="item.source?.friend?.alias || item.source.nickname" :id="item.source.id" />
+              </div>
             </template>
             <template #description>
               <div class="description">

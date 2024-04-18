@@ -1,3 +1,4 @@
+// @ts-ignore
 import OSS from 'ali-oss'
 import Tool from '@/utils/tool'
 import moment from "moment";

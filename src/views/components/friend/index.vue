@@ -16,7 +16,6 @@ const getFriendsData = async () => {
 }
 getFriendsData()
 
-
 const createdAtFromText = (createdAt: any) => {
 	createdAt = moment(createdAt).fromNow()
 	createdAt = `<span class="text-[#00c1de]">${createdAt}</span>`
